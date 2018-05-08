@@ -1,0 +1,32 @@
+[package]
+name = "cryptomkt"
+version = "0.1.0"
+authors = ["Yolier Galan Tasse <gallegogt@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+description = "Api para el acceso al Exchange Cryptomarket"
+keywords = ["trading"]
+
+[lib]
+# could be `staticlib` as well
+crate-type = ["dylib"]
+
+[dependencies]
+# HTTP Request
+hyper = "^0.11"
+# The core APIs, including the Serialize and Deserialize traits. Always
+# required when using Serde.
+serde = "^1.0"
+# Support for #[derive(Serialize, Deserialize)]. Required if you want Serde
+# to work for structs and enums defined in your crate.
+serde_derive = "^1.0"
+# Each data format lives in its own crate; the sample code below uses JSON
+# but you may be using a different one.
+serde_json = "1.0"
+# HTTP Request Library
+reqwest="^0.8"
+bytes = "^0.4"
+# Log
+log = "^0.4"
+# Cryptography
+ring = "^0.12"
