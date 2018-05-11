@@ -9,7 +9,7 @@ keywords = ["trading"]
 
 [lib]
 # could be `staticlib` as well
-crate-type = ["dylib"]
+crate-type = ["rlib", "dylib"]
 
 [dependencies]
 # HTTP Request
