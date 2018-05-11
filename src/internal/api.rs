@@ -1,15 +1,15 @@
-extern crate hyper;
-extern crate reqwest;
 extern crate ring;
-// extern crate serde_json;
-
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use std::fmt::Write;
 
 use self::ring::{digest, hmac};
-use self::reqwest::Url;
-use self::hyper::header::Headers;
+use reqwest::Url;
+use hyper::header::Headers;
+
+use serde::de::DeserializeOwned;
+use serde_json;
+// use log::Level;
 
 /// X-MKT-APIKEY: La API key como un string
 header! { (XMktApiKey, "X-MKT-APIKEY") => [String] }
@@ -18,8 +18,12 @@ header! { (XMktSignature, "X-MKT-SIGNATURE") => [String] }
 /// X-MKT-TIMESTAMP: Un timestamp para tu llamada
 header! { (XMktTimestamp, "X-MKT-TIMESTAMP") => [String] }
 
-use internal::request::{HttpReq, CryptoMktRequest};
+use internal::request::{CryptoMktRequest, HttpReq};
+use internal::errors::CryptoMktErrorType;
 
+///
+/// API Interna
+///
 pub struct Api<'a> {
     api_key: &'a str,
     secret_key: &'a str,
@@ -32,7 +36,7 @@ impl<'a> Api<'a> {
     ///
     /// Crea una instancia de tipo API
     ///
-    /// #Argumentos
+    /// Argumentos
     ///     api_key: Cryptomarket API_KEY
     ///     secret_key: Cryptomarket SECRET_KEY
     ///     http_transport: Interfaz por donde se harían las peticiones Get y Post al servicio
@@ -63,7 +67,7 @@ impl<'a> Api<'a> {
     ///
     /// Construye la URL
     ///
-    /// #Argumentos
+    /// Argumentos
     ///     endpoint: Endpoint desde donde se va a extraer los datos
     ///     params: Parámetros de la url
     ///
@@ -86,45 +90,62 @@ impl<'a> Api<'a> {
 
     ///
     ///
-    /// #Argumentos
+    /// Argumentos
     ///     endpoint: Endpoint desde donde se va a extraer los datos
     ///     params: Parámetros de la url
     ///     is_public: indica si el endpoint es public
     ///
-    pub fn get_edge(
+    pub fn get_edge<T>(
         &self,
         endpoint: &'a str,
         params: HashMap<String, String>,
         is_public: bool,
-    ) -> String {
+    ) -> Result<T, CryptoMktErrorType>
+    where
+        T: DeserializeOwned,
+    {
         let api_url = self.build_url(endpoint, &params);
         let headers = self.build_headers(endpoint, &params, is_public, true);
-        match self.req.get(api_url, headers) {
-            Ok(resp) => resp,
-            Err(_) => "".to_string(),
+        let result = try!(self.req.get(api_url, headers));
+        match serde_json::from_str(&result) {
+            Ok(sr) => Ok(sr),
+            Err(e) => {
+                println!("{:?}", e);
+                Err(CryptoMktErrorType::MalformedResource)
+            }
         }
     }
-
     ///
     ///
-    /// #Argumentos
+    /// Argumentos
     ///     endpoint: Endpoint desde donde se va a extraer los datos
     ///     params: Parámetros de la url
     ///     is_public: indica si el endpoint es public
     ///
-    pub fn post_edge(&self, endpoint: &'a str, payload: HashMap<String, String>) -> String {
+    pub fn post_edge<T>(
+        &self,
+        endpoint: &'a str,
+        payload: HashMap<String, String>,
+    ) -> Result<T, CryptoMktErrorType>
+    where
+        T: DeserializeOwned,
+    {
         let api_url = self.build_url(endpoint, &HashMap::new());
         let headers = self.build_headers(endpoint, &payload, false, false);
-        match self.req.post(api_url, headers, payload) {
-            Ok(resp) => resp,
-            Err(_) => "".to_string(),
+        let result = try!(self.req.post(api_url, headers, payload));
+        match serde_json::from_str(&result) {
+            Ok(sr) => Ok(sr),
+            Err(e) => {
+                println!("{:?}", e);
+                Err(CryptoMktErrorType::MalformedResource)
+            }
         }
     }
 
     ///
     ///  Crea el formato para el header => X-MKT-SIGNATURE
     ///
-    /// # Argumentos
+    /// Argumentos
     ///     endpoint: Dirección relativa desde donde se van a extraer los datos o donde se enviarán
     ///     payload: Parámetros de la URL
     ///     is_get: Define si el método de encuesta es GET
@@ -157,7 +178,7 @@ impl<'a> Api<'a> {
     ///
     /// Devuelve firmado el mensaje pasado como parámetro
     ///
-    /// # Argumentos
+    /// Argumentos
     ///     msg: cadena de texto que se requiere firmar
     ///
     pub fn sign_msg(&self, msg: &'a str) -> String {
@@ -175,7 +196,7 @@ impl<'a> Api<'a> {
     /// Conforma los headers para realizar la petición al servidor, en caso de no ser publica
     /// adiciona los headers para la autenticación
     ///
-    ///  # Argumentos
+    ///  Argumentos
     ///     endpoint: Endpoint desde donde se va a extraer los datos
     ///     payload: Parámetros de la url
     ///     is_public: indica si el endpoint es public
