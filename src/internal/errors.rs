@@ -25,3 +25,6 @@ pub enum CryptoMktErrorType {
     //
     MalformedResource
 }
+
+// Define alea generico al Result para  CryptoMktErrorType
+pub type CryptoMktResult<T> = Result<T, CryptoMktErrorType>;

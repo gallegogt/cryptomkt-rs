@@ -5,7 +5,7 @@ use self::reqwest::header::Headers;
 use self::reqwest::{StatusCode, Url};
 use std::collections::HashMap;
 
-use internal::errors::CryptoMktErrorType;
+use internal::errors::{CryptoMktErrorType,CryptoMktResult};
 
 pub trait HttpReq {
     ///
@@ -108,7 +108,7 @@ impl HttpReq for CryptoMktRequest {
     ///     url: Url
     ///     headers: Headers
     ///
-    fn get(&self, url: Url, headers: Headers) -> Result<String, CryptoMktErrorType> {
+    fn get(&self, url: Url, headers: Headers) -> CryptoMktResult<String> {
         let result = self.client.get(url).headers(headers).send();
         match result {
             Ok(mut resp) => match resp.status() {
@@ -138,7 +138,7 @@ impl HttpReq for CryptoMktRequest {
         url: Url,
         headers: Headers,
         payload: HashMap<String, String>,
-    ) -> Result<String, CryptoMktErrorType> {
+    ) -> CryptoMktResult<String> {
         let result = self.client.post(url).headers(headers).form(&payload).send();
 
         match result {

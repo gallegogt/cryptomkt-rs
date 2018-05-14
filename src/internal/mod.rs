@@ -12,7 +12,7 @@ pub mod response;
 mod tests {
     use super::*;
     use self::request::HttpReq;
-    use self::errors::CryptoMktErrorType;
+    use self::errors::{CryptoMktErrorType, CryptoMktResult};
     use self::api::Api;
 
     use std::collections::HashMap;
@@ -128,7 +128,7 @@ mod tests {
         ///     url: Url
         ///     headers: Headers
         ///
-        fn get(&self, _url: Url, _headers: Headers) -> Result<String, CryptoMktErrorType> {
+        fn get(&self, _url: Url, _headers: Headers) -> CryptoMktResult<String> {
             Ok(self.resp_for_get.clone())
         }
         ///
@@ -142,7 +142,7 @@ mod tests {
             _url: Url,
             _headers: Headers,
             _payload: HashMap<String, String>,
-        ) -> Result<String, CryptoMktErrorType> {
+        ) -> CryptoMktResult<String> {
             Ok(self.resp_for_post.clone())
         }
     }

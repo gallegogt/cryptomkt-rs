@@ -19,7 +19,7 @@ header! { (XMktSignature, "X-MKT-SIGNATURE") => [String] }
 header! { (XMktTimestamp, "X-MKT-TIMESTAMP") => [String] }
 
 use internal::request::{CryptoMktRequest, HttpReq};
-use internal::errors::CryptoMktErrorType;
+use internal::errors::{CryptoMktErrorType, CryptoMktResult};
 
 ///
 /// API Interna
@@ -100,7 +100,7 @@ impl<'a> Api<'a> {
         endpoint: &'a str,
         params: HashMap<String, String>,
         is_public: bool,
-    ) -> Result<T, CryptoMktErrorType>
+    ) -> CryptoMktResult<T>
     where
         T: DeserializeOwned,
     {
@@ -126,7 +126,7 @@ impl<'a> Api<'a> {
         &self,
         endpoint: &'a str,
         payload: HashMap<String, String>,
-    ) -> Result<T, CryptoMktErrorType>
+    ) -> CryptoMktResult<T>
     where
         T: DeserializeOwned,
     {
