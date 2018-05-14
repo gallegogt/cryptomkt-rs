@@ -75,6 +75,7 @@ pub struct Book {
     /// Fecha de creación
     pub amount: String
 }
+
 /// Lista de órdenes activas en CryptoMarket.
 pub type BookResponse = CryptoMktResponse<Vec<Book>>;
 
