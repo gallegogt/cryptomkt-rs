@@ -11,7 +11,10 @@ extern crate serde_json;
 
 mod internal;
 mod api;
+mod market;
+
 pub use api::{CryptoMktApi, RequestMethod};
+pub use market::Market;
 
 // #[cfg(test)]
 // mod tests {
