@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use internal::api;
 use internal::errors::CryptoMktErrorType;
-use internal::response::CryptoMktResponse;
 use serde::de::DeserializeOwned;
 
 ///
