@@ -38,19 +38,19 @@ pub enum OrderState {
 ///
 /// A travez de esta clase se acceden a las funcionalidades que ofrese el mercado, ya sea crear orden de compra, optener el estado del mercado, etc...
 ///
-pub struct Market<'m> {
-    api: CryptoMktApi<'m>,
-    name: &'m str,
+pub struct Market {
+    api: CryptoMktApi,
+    name: String,
 }
 
-impl<'m> Market<'m> {
+impl Market {
     ///
     /// Crea nueva instancia
     ///
-    pub fn new(api: CryptoMktApi<'m>, market_name: &'m str) -> Self {
+    pub fn new<'m>(api: CryptoMktApi, market_name: &'m str) -> Self {
         Market {
             api: api,
-            name: market_name,
+            name: market_name.to_string(),
         }
     }
 
@@ -59,7 +59,7 @@ impl<'m> Market<'m> {
     ///
     pub fn get_current_ticker(&self) -> CryptoMktResult<Ticker> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         let resp = self.api
             .call::<TickerResponse>(RequestMethod::Get(true), "ticket", params);
         match resp {
@@ -78,7 +78,7 @@ impl<'m> Market<'m> {
         limit: u32,
     ) -> CryptoMktResult<Vec<Book>> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         params.insert("type".to_string(), orders_type.to_string().to_lowercase());
         params.insert("page".to_string(), format!("{}", page));
         params.insert("limit".to_string(), format!("{}", limit));
@@ -94,7 +94,7 @@ impl<'m> Market<'m> {
     ///
     /// Retorna listado de trades realizados en CryptoMarket.
     ///
-    pub fn get_trades(
+    pub fn get_trades<'m>(
         &self,
         start: &'m str,
         end: &'m str,
@@ -102,7 +102,7 @@ impl<'m> Market<'m> {
         limit: u32,
     ) -> CryptoMktResult<Vec<Trade>> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         params.insert("start".to_string(), start.to_string());
         params.insert("end".to_string(), end.to_string());
         params.insert("page".to_string(), format!("{}", page));
@@ -127,7 +127,7 @@ impl<'m> Market<'m> {
         limit: u32,
     ) -> CryptoMktResult<Vec<Order>> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         params.insert("page".to_string(), format!("{}", page));
         params.insert("limit".to_string(), format!("{}", limit));
 
@@ -153,7 +153,7 @@ impl<'m> Market<'m> {
         price: f32,
     ) -> CryptoMktResult<Vec<Order>> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         params.insert("amount".to_string(), format!("{}", amount));
         params.insert("price".to_string(), format!("{}", price));
         params.insert("type".to_string(), order_type.to_string().to_lowercase());
@@ -169,7 +169,7 @@ impl<'m> Market<'m> {
     ///
     /// Retorna el estado de una orden
     ///
-    pub fn get_order_status(&self, order_id: &'m str) -> CryptoMktResult<Order> {
+    pub fn get_order_status<'m>(&self, order_id: &'m str) -> CryptoMktResult<Order> {
         let mut params = HashMap::new();
         params.insert("id".to_string(), order_id.to_string());
 
@@ -187,7 +187,7 @@ impl<'m> Market<'m> {
     ///
     /// Permite cancelar una orden
     ///
-    pub fn cancel_order(&self, order_id: &'m str) -> CryptoMktResult<Order> {
+    pub fn cancel_order<'m>(&self, order_id: &'m str) -> CryptoMktResult<Order> {
         let mut params = HashMap::new();
         params.insert("id".to_string(), order_id.to_string());
 
@@ -209,7 +209,7 @@ impl<'m> Market<'m> {
         amount: f32,
     ) -> CryptoMktResult<OrdersInstant> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         params.insert("amount".to_string(), format!("{}", amount));
         params.insert("type".to_string(), order_type.to_string().to_lowercase());
 
@@ -232,7 +232,7 @@ impl<'m> Market<'m> {
         amount: f32,
     ) -> CryptoMktResult<String> {
         let mut params = HashMap::new();
-        params.insert("market".to_string(), self.name.to_string());
+        params.insert("market".to_string(), self.name.clone());
         params.insert("amount".to_string(), format!("{}", amount));
         params.insert("type".to_string(), order_type.to_string().to_lowercase());
 

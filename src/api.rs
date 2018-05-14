@@ -1,6 +1,7 @@
 use std::collections::HashMap;
-use internal::api;
+use internal::api::Api;
 use internal::errors::CryptoMktErrorType;
+use internal::request::CryptoMktRequest;
 use serde::de::DeserializeOwned;
 
 ///
@@ -17,31 +18,36 @@ pub enum RequestMethod {
 ///
 /// Cryptomarket API
 ///
-pub struct CryptoMktApi<'a> {
-    i_api: Box<api::Api<'a>>,
+#[derive(Debug, Clone)]
+pub struct CryptoMktApi {
+    i_api: Box<Api<CryptoMktRequest>>,
 }
 
-impl<'a> CryptoMktApi<'a> {
+impl CryptoMktApi {
     ///
     /// Crea la nueva instancia del API
     ///
-    pub fn new(api_key: &'a str, secret_key: &'a str) -> Self {
+    pub fn new<'a>(api_key: &'a str, secret_key: &'a str) -> Self {
         CryptoMktApi {
-            i_api: Box::new(api::Api::new(api_key, secret_key, None)),
+            i_api: Box::new(Api::<CryptoMktRequest>::new(
+                api_key,
+                secret_key,
+                Box::new(CryptoMktRequest::new()),
+            )),
         }
     }
 
     ///
     /// Devuelve el dominio
     ///
-    pub fn domain(&self) -> &'a str {
+    pub fn domain(&self) -> String {
         self.i_api.domain()
     }
 
     ///
     /// Devuelve la version del API
     ///
-    pub fn version(&self) -> &'a str {
+    pub fn version(&self) -> String {
         self.i_api.api_version()
     }
 
@@ -53,7 +59,7 @@ impl<'a> CryptoMktApi<'a> {
     ///     endpoint: Cadena de texto con el endpoint de la API (Ej: "orders/active" )
     ///     payload: Datos a enviar endpoint
     ///
-    pub fn call<T>(
+    pub fn call<'a, T>(
         &self,
         method: RequestMethod,
         endpoint: &'a str,

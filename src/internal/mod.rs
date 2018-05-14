@@ -12,25 +12,71 @@ pub mod response;
 mod tests {
     use super::*;
     use self::request::HttpReq;
-    use self::errors::{CryptoMktErrorType, CryptoMktResult};
+    use self::errors::CryptoMktResult;
     use self::api::Api;
 
     use std::collections::HashMap;
     use self::reqwest::Url;
     use self::hyper::header::Headers;
 
-    use self::response::{BookResponse, EmptyResponse, MarketResponse, OrderResponse,
-                         OrdersInstantResponse, SimpleOrderResponse, TickerResponse, TradeResponse, BalanceResponse};
+    use self::response::{BalanceResponse, BookResponse, EmptyResponse, MarketResponse,
+                         OrderResponse, OrdersInstantResponse, SimpleOrderResponse,
+                         TickerResponse, TradeResponse};
 
     const API_KEY: &'static str = "FS24FJ7";
     const SECRET_KEY: &'static str = "SFT23GSD";
 
     ///
+    ///
+    /// Pruebas de respuestas para los diferentes ENDPOINTs
+    ///
+    struct MockRequest {
+        resp_for_get: String,
+        resp_for_post: String,
+    }
+
+    impl MockRequest {
+        ///
+        /// Inicializador de la clase
+        ///
+        pub fn new<'m>(resp_for_get: &'m str, resp_for_post: &'m str) -> Self {
+            MockRequest {
+                resp_for_get: resp_for_get.to_string(),
+                resp_for_post: resp_for_post.to_string(),
+            }
+        }
+    }
+
+    impl HttpReq for MockRequest {
+        ///
+        ///  Argumentos:
+        ///     url: Url
+        ///     headers: Headers
+        ///
+        fn get(&self, _url: Url, _headers: Headers) -> CryptoMktResult<String> {
+            Ok(self.resp_for_get.clone())
+        }
+        ///
+        ///  Argumentos:
+        ///     url: Url
+        ///     headers: Headers
+        ///     payload: Datos a enviar a la URL especificada
+        ///
+        fn post(
+            &self,
+            _url: Url,
+            _headers: Headers,
+            _payload: HashMap<String, String>,
+        ) -> CryptoMktResult<String> {
+            Ok(self.resp_for_post.clone())
+        }
+    }
+    ///
     /// Configura la instancia de API para los diferentes Test que no requieren de
     /// una respuesta
     ///
-    fn setup_test<'a>() -> Api<'a> {
-        Api::new("FS24FJ7", "SFT23GSD", None)
+    fn setup_test() -> Api<MockRequest> {
+        Api::<MockRequest>::new("FS24FJ7", "SFT23GSD", Box::new(MockRequest::new("", "")))
     }
 
     #[test]
@@ -100,60 +146,13 @@ mod tests {
         assert_eq!(resp, "08ec7ce100a196d36970a77f7eee46c2e319e03edb953b0c05e5e9605b5c0d95cc7759f1a074f817f54527f618e90a1e".to_string());
     }
 
-    ///
-    ///
-    /// Pruebas de respuestas para los diferentes ENDPOINTs
-    ///
-    ///
-    struct MockRequest {
-        resp_for_get: String,
-        resp_for_post: String,
-    }
-
-    impl MockRequest {
-        ///
-        /// Inicializador de la clase
-        ///
-        pub fn new<'m>(resp_for_get: &'m str, resp_for_post: &'m str) -> Self {
-            MockRequest {
-                resp_for_get: resp_for_get.to_string(),
-                resp_for_post: resp_for_post.to_string(),
-            }
-        }
-    }
-
-    impl HttpReq for MockRequest {
-        ///
-        ///  Argumentos:
-        ///     url: Url
-        ///     headers: Headers
-        ///
-        fn get(&self, _url: Url, _headers: Headers) -> CryptoMktResult<String> {
-            Ok(self.resp_for_get.clone())
-        }
-        ///
-        ///  Argumentos:
-        ///     url: Url
-        ///     headers: Headers
-        ///     payload: Datos a enviar a la URL especificada
-        ///
-        fn post(
-            &self,
-            _url: Url,
-            _headers: Headers,
-            _payload: HashMap<String, String>,
-        ) -> CryptoMktResult<String> {
-            Ok(self.resp_for_post.clone())
-        }
-    }
-
     #[test]
     fn test_response_for_market_list() {
         let mock_transport = MockRequest::new(
             "{\"status\": \"success\",\"data\": [\"ETHARS\",\"ETHCLP\"]}",
             "",
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({"status": "success","data": ["ETHARS","ETHCLP"]});
         let resp = api.get_edge::<MarketResponse>("market", HashMap::new(), true)
@@ -180,7 +179,7 @@ mod tests {
             "{\"status\":\"success\",\"data\":[{\"high\":\"6888\",\"volume\":\"13.03\",\"low\":\"6303\",\"ask\":\"6887\",\"timestamp\":\"2017-08-2915:44:17.267526\",\"bid\":\"6416\",\"last_price\":\"6610\",\"market\":\"ETHARS\"}]}",
             "",
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success","data":[{"high":"6888","volume":"13.03","low":"6303","ask":"6887","timestamp":"2017-08-2915:44:17.267526","bid":"6416","last_price":"6610","market":"ETHARS"}]
@@ -211,7 +210,7 @@ mod tests {
             "{\"status\":\"success\",\"pagination\":{\"previous\":0,\"limit\":20,\"page\":0,\"next\":\"null\"},\"data\":[{\"timestamp\":\"2017-08-31T12:31:58.782060\",\"price\":\"252610\",\"amount\":\"0.6729\"},{\"timestamp\":\"2017-08-31T10:14:58.466285\",\"price\":\"252200\",\"amount\":\"7.6226\"},{\"timestamp\":\"2017-08-30T18:15:54.757558\",\"price\":\"252000\",\"amount\":\"2.9761\"},{\"timestamp\":\"2017-08-31T14:02:32.377008\",\"price\":\"251900\",\"amount\":\"7.9396\"},{\"timestamp\":\"2017-08-30T15:29:12.945642\",\"price\":\"251540\",\"amount\":\"0.7314\"},{\"timestamp\":\"2017-08-31T13:46:34.666282\",\"price\":\"250100\",\"amount\":\"0.0399\"}]}",
             "",
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success",
@@ -254,7 +253,7 @@ mod tests {
             "{\"status\":\"success\",\"pagination\":{\"previous\":1,\"limit\":20,\"page\":2,\"next\":\"null\"},\"data\":[{\"market_taker\":\"buy\",\"timestamp\":\"2017-05-29T22:14:00.419466\",\"price\":\"155000\",\"amount\":\"0.129\",\"market\":\"ETHCLP\"},{\"market_taker\":\"buy\",\"timestamp\":\"2017-05-29T22:13:52.168265\",\"price\":\"155000\",\"amount\":\"0.6451\",\"market\":\"ETHCLP\"},{\"market_taker\":\"buy\",\"timestamp\":\"2017-05-29T22:01:52.054549\",\"price\":\"155000\",\"amount\":\"2.7441\",\"market\":\"ETHCLP\"},{\"market_taker\":\"buy\",\"timestamp\":\"2017-05-29T22:01:51.700777\",\"price\":\"154000\",\"amount\":\"3\",\"market\":\"ETHCLP\"},{\"market_taker\":\"buy\",\"timestamp\":\"2017-05-29T22:01:51.342244\",\"price\":\"151990\",\"amount\":\"0.0335\",\"market\":\"ETHCLP\"}]}",
             "",
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success",
@@ -309,7 +308,7 @@ mod tests {
             "{\"status\":\"success\",\"pagination\":{\"previous\":\"null\",\"limit\":20,\"page\":0,\"next\":\"null\"},\"data\":[{\"status\":\"active\",\"created_at\":\"2017-09-01T14:01:56.887272\",\"amount\":{\"original\":\"1.4044\",\"remaining\":\"1.4044\"},\"execution_price\":null,\"price\":\"7120\",\"type\":\"buy\",\"id\":\"M103966\",\"market\":\"ETHCLP\",\"updated_at\":\"2017-09-01T14:01:56.887272\"},{\"status\":\"active\",\"created_at\":\"2017-09-01T14:02:36.386967\",\"amount\":{\"original\":\"1.25\",\"remaining\":\"1.25\"},\"execution_price\":null,\"price\":\"8000\",\"type\":\"buy\",\"id\":\"M103967\",\"market\":\"ETHCLP\",\"updated_at\":\"2017-09-01T14:02:36.386967\"}]}",
             "",
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success",
@@ -352,7 +351,7 @@ mod tests {
             "{\"status\":\"success\",\"pagination\":{\"previous\":\"null\",\"limit\":20,\"page\":0,\"next\":\"null\"},\"data\":[{\"status\":\"executed\",\"created_at\":\"2017-08-31T21:37:42.282102\",\"amount\":{\"executed\":\"0.6\",\"original\":\"3.75\"},\"execution_price\":\"8000\",\"executed_at\":\"2017-08-31T22:01:19.481403\",\"price\":\"8000\",\"type\":\"buy\",\"id\":\"M103959\",\"market\":\"ETHCLP\"},{\"status\":\"executed\",\"created_at\":\"2017-08-31T21:37:42.282102\",\"amount\":{\"executed\":\"0.5\",\"original\":\"3.75\"},\"execution_price\":\"8000\",\"executed_at\":\"2017-08-31T22:00:13.805482\",\"price\":\"8000\",\"type\":\"buy\",\"id\":\"M103959\",\"market\":\"ETHCLP\"},{\"status\":\"executed\",\"created_at\":\"2016-11-26T23:27:54.502024\",\"amount\":{\"executed\":\"1.5772\",\"original\":\"1.5772\"},\"execution_price\":\"6340\",\"executed_at\":\"2017-01-02T22:56:03.897534\",\"price\":\"6340\",\"type\":\"buy\",\"id\":\"M103260\",\"market\":\"ETHCLP\"}]}",
             "",
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success",
@@ -407,7 +406,7 @@ mod tests {
             "",
             "{\"status\":\"success\",\"data\":{\"status\":\"executed\",\"created_at\":\"2017-09-01T19:35:26.641136\",\"amount\":{\"executed\":\"0.3\",\"original\":\"0.3\"},\"avg_execution_price\":\"30000\",\"price\":\"10000\",\"type\":\"buy\",\"id\":\"M103975\",\"market\":\"ETHCLP\",\"updated_at\":\"2017-09-01T19:35:26.688106\"}}"
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success",
@@ -457,7 +456,7 @@ mod tests {
             "{\"status\":\"success\",\"data\":{\"status\":\"active\",\"created_at\":\"2017-09-01T14:01:56.887272\",\"amount\":{\"executed\":\"0\",\"original\":\"1.4044\"},\"avg_execution_price\":\"0\",\"price\":\"7120\",\"type\":\"buy\",\"id\":\"M103966\",\"market\":\"ETHCLP\",\"updated_at\":\"2017-09-01T14:01:56.887272\"}}",
             ""
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
             "status":"success",
@@ -497,7 +496,7 @@ mod tests {
             "",
             "{\"status\":\"success\",\"data\":{\"status\":\"cancelled\",\"created_at\":\"2017-09-01T14:02:36.386967\",\"amount\":{\"executed\":\"0\",\"original\":\"1.25\"},\"avg_execution_price\":\"0\",\"price\":\"8000\",\"type\":\"buy\",\"id\":\"M103967\",\"market\":\"ETHCLP\",\"updated_at\":\"2017-09-01T14:02:36.386967\"}}"
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
            "status":"success",
@@ -540,7 +539,7 @@ mod tests {
             "{\"status\":\"success\",\"data\":{\"obtained\":\"18047138.226\",\"required\":\"159\"}}",
             ""
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
            "status":"success","data":{"obtained":"18047138.226","required":"159"}
@@ -574,7 +573,7 @@ mod tests {
     #[test]
     fn test_response_for_orders_instant_create() {
         let mock_transport = MockRequest::new("", "{\"status\":\"success\",\"data\":\"\"}");
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
            "status": "success",
@@ -602,7 +601,7 @@ mod tests {
             "{\"status\":\"success\",\"data\":[{\"available\":\"120347\",\"wallet\":\"CLP\",\"balance\":\"120347\"},{\"available\":\"10.3399\",\"wallet\":\"ETH\",\"balance\":\"11.3399\"}]}",
             ""
         );
-        let api = Api::new(API_KEY, SECRET_KEY, Some(Box::new(mock_transport)));
+        let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({
            "status":"success",
@@ -611,7 +610,7 @@ mod tests {
             ]
         });
 
-        let mut params = HashMap::new();
+        let params = HashMap::new();
         let resp = api.get_edge::<BalanceResponse>("balance", params, false)
             .unwrap();
 

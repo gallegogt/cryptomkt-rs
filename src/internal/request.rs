@@ -7,6 +7,9 @@ use std::collections::HashMap;
 
 use internal::errors::{CryptoMktErrorType,CryptoMktResult};
 
+///
+/// Definición que deben cumplir para poder extaer datos mediante HTTP
+///
 pub trait HttpReq {
     ///
     ///  Argumentos:
@@ -31,6 +34,7 @@ pub trait HttpReq {
 ///
 /// CryptoMktRequest
 ///
+#[derive(Debug, Clone)]
 pub struct CryptoMktRequest {
     client: Box<Client>,
 }

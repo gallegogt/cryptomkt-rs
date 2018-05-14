@@ -18,21 +18,28 @@ header! { (XMktSignature, "X-MKT-SIGNATURE") => [String] }
 /// X-MKT-TIMESTAMP: Un timestamp para tu llamada
 header! { (XMktTimestamp, "X-MKT-TIMESTAMP") => [String] }
 
-use internal::request::{CryptoMktRequest, HttpReq};
+use internal::request::HttpReq;
 use internal::errors::{CryptoMktErrorType, CryptoMktResult};
 
 ///
 /// API Interna
 ///
-pub struct Api<'a> {
-    api_key: &'a str,
-    secret_key: &'a str,
-    domain: &'a str,
-    api_version: &'a str,
-    req: Box<HttpReq>,
+#[derive(Debug, Clone)]
+pub struct Api<R>
+where
+    R: HttpReq,
+{
+    api_key: String,
+    secret_key: String,
+    domain: String,
+    api_version: String,
+    req: Box<R>,
 }
 
-impl<'a> Api<'a> {
+impl<R> Api<R>
+where
+    R: HttpReq,
+{
     ///
     /// Crea una instancia de tipo API
     ///
@@ -41,27 +48,23 @@ impl<'a> Api<'a> {
     ///     secret_key: Cryptomarket SECRET_KEY
     ///     http_transport: Interfaz por donde se harían las peticiones Get y Post al servicio
     ///
-    pub fn new(
-        api_key: &'a str,
-        secret_key: &'a str,
-        http_transport: Option<Box<HttpReq>>,
-    ) -> Self {
+    pub fn new<'a>(api_key: &'a str, secret_key: &'a str, http_transport: Box<R>) -> Self {
         Api {
-            api_key: api_key,
-            secret_key: secret_key,
-            domain: "https://api.cryptomkt.com/",
-            api_version: "v1",
-            req: http_transport.unwrap_or(Box::new(CryptoMktRequest::new())),
+            api_key: api_key.to_string(),
+            secret_key: secret_key.to_string(),
+            domain: "https://api.cryptomkt.com/".to_string(),
+            api_version: "v1".to_string(),
+            req: http_transport,
         }
     }
     /// Devuelve el dominio
-    pub fn domain(&self) -> &'a str {
-        self.domain
+    pub fn domain(&self) -> String {
+        self.domain.clone()
     }
 
     /// Devuelve la version del API
-    pub fn api_version(&self) -> &'a str {
-        self.api_version
+    pub fn api_version(&self) -> String {
+        self.api_version.clone()
     }
 
     ///
@@ -71,7 +74,7 @@ impl<'a> Api<'a> {
     ///     endpoint: Endpoint desde donde se va a extraer los datos
     ///     params: Parámetros de la url
     ///
-    pub fn build_url(&self, endpoint: &'a str, params: &HashMap<String, String>) -> Url {
+    pub fn build_url<'a>(&self, endpoint: &'a str, params: &HashMap<String, String>) -> Url {
         let mut api_url = Url::parse(&self.domain).unwrap();
         // Adiciona la version de la API
         api_url = api_url
@@ -95,7 +98,7 @@ impl<'a> Api<'a> {
     ///     params: Parámetros de la url
     ///     is_public: indica si el endpoint es public
     ///
-    pub fn get_edge<T>(
+    pub fn get_edge<'a, T>(
         &self,
         endpoint: &'a str,
         params: HashMap<String, String>,
@@ -122,7 +125,7 @@ impl<'a> Api<'a> {
     ///     params: Parámetros de la url
     ///     is_public: indica si el endpoint es public
     ///
-    pub fn post_edge<T>(
+    pub fn post_edge<'a, T>(
         &self,
         endpoint: &'a str,
         payload: HashMap<String, String>,
@@ -150,7 +153,7 @@ impl<'a> Api<'a> {
     ///     payload: Parámetros de la URL
     ///     is_get: Define si el método de encuesta es GET
     ///
-    pub fn build_signature_format(
+    pub fn build_signature_format<'a>(
         &self,
         endpoint: &'a str,
         payload: &HashMap<String, String>,
@@ -181,7 +184,7 @@ impl<'a> Api<'a> {
     /// Argumentos
     ///     msg: cadena de texto que se requiere firmar
     ///
-    pub fn sign_msg(&self, msg: &'a str) -> String {
+    pub fn sign_msg<'a>(&self, msg: &'a str) -> String {
         let s_key = hmac::SigningKey::new(&digest::SHA384, self.secret_key.as_bytes());
         let sign = hmac::sign(&s_key, msg.as_bytes());
 
@@ -202,7 +205,7 @@ impl<'a> Api<'a> {
     ///     is_public: indica si el endpoint es public
     ///     is_get: Define si el método de encuesta es GET
     ///
-    fn build_headers(
+    fn build_headers<'a>(
         &self,
         endpoint: &'a str,
         payload: &HashMap<String, String>,
