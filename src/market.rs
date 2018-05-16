@@ -53,6 +53,10 @@ impl Market {
             name: market_name.to_string(),
         }
     }
+    /// Devuelve el nombre del Mercado (Ej ETHCLP)
+    pub fn get_name(&self) -> String {
+        self.name.clone()
+    }
 
     ///
     /// Devuelve como resultado el estado del mercado actual
@@ -61,7 +65,7 @@ impl Market {
         let mut params = HashMap::new();
         params.insert("market".to_string(), self.name.clone());
         let resp = self.api
-            .call::<TickerResponse>(RequestMethod::Get(true), "ticket", params);
+            .call::<TickerResponse>(RequestMethod::Get(true), "ticker", params);
         match resp {
             Ok(value) => Ok(value.data[0].clone()),
             Err(e) => Err(e),

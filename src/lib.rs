@@ -14,32 +14,6 @@ mod api;
 mod market;
 mod client;
 
-pub use api::{CryptoMktApi, RequestMethod};
 pub use internal::models;
-pub use market::Market;
+pub use market::{Market, OrderType};
 pub use client::CryptoMktClient;
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use std::collections::HashMap;
-//     use internal::response::CryptoMktResponse;
-
-//     type SymbolsResponse = CryptoMktResponse<Vec<String>>;
-
-//     #[test]
-//     fn test_api_call() {
-//         let api_ck = CryptoMktApi::new("api_key", "secret_key");
-//         let response = api_ck.call::<SymbolsResponse>(RequestMethod::Get(true), "market", HashMap::new());
-//         match response {
-//             Ok(rsp) => {
-//                 println!("{:?}", rsp);
-//                 assert!(rsp.data.len() != 0);
-//             },
-//             Err(e) => {
-//                 println!("{:?}", e);
-//                 assert!(false);
-//             }
-//         }
-//     }
-// }
