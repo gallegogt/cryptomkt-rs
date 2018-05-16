@@ -1,11 +1,10 @@
 extern crate cryptomkt;
 
-use cryptomkt::CryptoMktApi;
+use cryptomkt::CryptoMktClient;
 
 #[test]
-fn test_api_info() {
-    let api = CryptoMktApi::new("APK", "SK");
-
-    assert_eq!(api.version(), "v1" );
-    assert_eq!(api.domain(), "https://api.cryptomkt.com/" );
+fn test_api_get_markets() {
+    let api = CryptoMktClient::new("APK", "SK");
+    let markets = api.get_markets();
+    assert!(markets.len() > 1);
 }
