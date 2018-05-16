@@ -15,6 +15,7 @@ mod market;
 mod client;
 
 pub use api::{CryptoMktApi, RequestMethod};
+pub use internal::models;
 pub use market::Market;
 pub use client::CryptoMktClient;
 

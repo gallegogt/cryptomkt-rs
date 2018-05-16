@@ -6,6 +6,7 @@ extern crate serde;
 pub mod errors;
 pub mod request;
 pub mod api;
+pub mod models;
 pub mod response;
 
 #[cfg(test)]

@@ -1,8 +1,8 @@
 use api::{CryptoMktApi, RequestMethod};
 use internal::errors::CryptoMktResult;
-use internal::response::{Book, BookResponse, EmptyResponse, Order, OrderResponse, OrdersInstant,
-                         OrdersInstantResponse, SimpleOrderResponse, Ticker, TickerResponse,
-                         Trade, TradeResponse};
+use internal::models::{Book, Order, OrdersInstant, Ticker, Trade};
+use internal::response::{BookResponse, EmptyResponse, OrderResponse, OrdersInstantResponse,
+                         SimpleOrderResponse, TickerResponse, TradeResponse};
 use std::collections::HashMap;
 use std::fmt::{self, Display, Formatter};
 
