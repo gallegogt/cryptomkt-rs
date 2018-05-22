@@ -2,7 +2,6 @@
 name = "cryptomkt"
 version = "0.1.0"
 authors = ["Yolier Galan Tasse <gallegogt@gmail.com>"]
-license = "Apache-2.0"
 readme = "README.md"
 description = "Api para el acceso al Exchange Cryptomarket"
 keywords = ["trading", "API"]
@@ -15,6 +14,13 @@ include = [
 [lib]
 # could be `staticlib` as well
 crate-type = ["rlib", "dylib"]
+# A flag for enabling documentation tests for this target. This is only relevant
+# for libraries, it has no effect on other sections. This is used by
+# `cargo test`.
+doctest = true
+# A flag for enabling documentation of this target. This is used by `cargo doc`.
+doc = true
+
 
 [dependencies]
 # HTTP Request
