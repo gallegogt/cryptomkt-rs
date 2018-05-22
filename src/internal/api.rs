@@ -146,7 +146,7 @@ where
     }
 
     ///
-    ///  Crea el formato para el header => X-MKT-SIGNATURE
+    /// Crea el formato para el header => X-MKT-SIGNATURE
     ///
     /// Argumentos
     ///     endpoint: Dirección relativa desde donde se van a extraer los datos o donde se enviarán
