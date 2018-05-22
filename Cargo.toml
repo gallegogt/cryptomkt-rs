@@ -6,6 +6,8 @@ readme = "README.md"
 description = "Api para el acceso al Exchange Cryptomarket"
 keywords = ["trading", "API"]
 license-file = "LICENCE"
+repository = "https://github.com/gallegogt/cryptomkt-rs.git"
+homepage = "https://github.com/gallegogt/cryptomkt-rs"
 include = [
     "**/*.rs",
     "Cargo.toml",
