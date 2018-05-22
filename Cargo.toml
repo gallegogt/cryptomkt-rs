@@ -5,7 +5,12 @@ authors = ["Yolier Galan Tasse <gallegogt@gmail.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 description = "Api para el acceso al Exchange Cryptomarket"
-keywords = ["trading"]
+keywords = ["trading", "API"]
+license-file = "LICENCE"
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+]
 
 [lib]
 # could be `staticlib` as well
