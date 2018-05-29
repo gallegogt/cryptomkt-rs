@@ -25,8 +25,6 @@ impl Display for OrderType {
 
 ///
 /// Define los estados de la Orden
-///     Activa
-///     Ejecutada
 ///
 pub enum OrderState {
     Active,
@@ -36,7 +34,8 @@ pub enum OrderState {
 ///
 /// Mercado
 ///
-/// A travez de esta clase se acceden a las funcionalidades que ofrese el mercado, ya sea crear orden de compra, optener el estado del mercado, etc...
+/// A travez de esta clase se acceden a las funcionalidades que ofrese el mercado,
+/// ya sea crear orden de compra, optener el estado del mercado, etc...
 ///
 pub struct Market {
     api: CryptoMktApi,

@@ -7,7 +7,33 @@ use internal::response::{BalanceResponse, MarketResponse, PaymentResponse, Payme
 use std::collections::HashMap;
 
 ///
-/// Cliente Cryptomkt
+/// Implementación del cliente para el API
+///
+/// # Ejemplo
+///
+/// En este ejemplo se imrpimen el tricker actual de todos los mercados disponibles
+///
+/// ```
+/// extern crate cryptomkt;
+/// use cryptomkt::{CryptoMktClient, OrderType};
+///
+/// const API_KEY: &'static str = "<API_KEY>";
+/// const API_SECRET: &'static str = "<API SECRET>";
+///
+/// let client = CryptoMktClient::new(API_KEY, API_SECRET);
+/// let markets = client.get_markets();
+/// for m in markets.iter() {
+///     println!("{}", m.get_name());
+///     match m.get_current_ticker() {
+///         Ok(ticker) => {
+///           println!("{:?}", ticker);
+///         }
+///         Err(e) => {
+///            println!("{:?}", e);
+///         }
+///       }
+///     }
+/// ```
 ///
 pub struct CryptoMktClient {
     api: CryptoMktApi,
@@ -50,7 +76,8 @@ impl CryptoMktClient {
         Market::new(self.api.clone(), name)
     }
     ///
-    /// Un balance corresponde al estado de tus billeteras de criptomonedas y locales. Este estado contiene el saldo disponible, saldo contable y billetera correspondiente.
+    /// Un balance corresponde al estado de tus billeteras de criptomonedas y locales.
+    /// Este estado contiene el saldo disponible, saldo contable y billetera correspondiente.
     ///
     pub fn get_balance(&self) -> CryptoMktResult<Vec<Balance>> {
         let resp =

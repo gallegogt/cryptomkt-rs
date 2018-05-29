@@ -16,7 +16,21 @@ pub enum RequestMethod {
 }
 
 ///
-/// Cryptomarket API
+/// # Cryptomkt API
+///
+/// Permite el acceso al API de cryptomarket si conoces bien los diferentes
+/// endpoints. Para más información sobre los endpoints ir a [Developers Cryptomkt](http://developers.cryptomkt.com/)
+///
+/// ## Ejemplo
+///
+/// ```
+/// extern crate cryptomkt;
+/// use cryptomkt::CryptoMktApi;
+///
+/// let api = CryptoMktApi::new("<API Key>", "<Secret Key>");
+/// println!("Api version: {}", api.version());
+/// println!("Api domain: {}", api.domain());
+/// ```
 ///
 #[derive(Debug, Clone)]
 pub struct CryptoMktApi {
@@ -52,12 +66,34 @@ impl CryptoMktApi {
     }
 
     ///
-    /// Peticion HTTP
+    /// Realiza una petición HTTP al servidor
+    ///
+    /// ```
+    /// extern crate cryptomkt;
+    /// use cryptomkt::{CryptoMktApi, Market, RequestMethod};
+    /// use cryptomkt::response::MarketResponse;
+    /// use std::collections::HashMap;
+    ///
+    /// let api = CryptoMktApi::new("<API Key>", "<Secret Key>");
+    /// let resp = api.call::<MarketResponse>(RequestMethod::Get(true), "market", HashMap::new());
+    /// match resp {
+    ///     Ok(value) => {
+    ///         let mut market_list = Vec::new();
+    ///         for it in value.data {
+    ///             market_list.push(Market::new(api.clone(), it.clone().as_str()));
+    ///         }
+    ///         println!("{:?}", market_list[0].get_name());
+    ///     }
+    ///     Err(e) => {
+    ///         println!("{:?}", e);
+    ///     }
+    /// }
+    /// ```
     ///
     /// #Argumentos
-    ///     method: Get(is_public) | Post
-    ///     endpoint: Cadena de texto con el endpoint de la API (Ej: "orders/active" )
-    ///     payload: Datos a enviar endpoint
+    ///     `method`: Enum que representa el método de encuesta al servidor: Get(is_public) | Post
+    ///     `endpoint`: Cadena de texto con el endpoint de la API (Ej: "orders/active" ), no debe comenzar por "/"
+    ///     `payload`: Hashmap que representan los datos de encuesta para el servidor
     ///
     pub fn call<'a, T>(
         &self,

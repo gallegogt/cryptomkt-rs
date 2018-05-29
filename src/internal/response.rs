@@ -1,3 +1,8 @@
+//!
+//! En este módulo se encuentra las diferentes respuestas dada por el
+//! servidor para los diferentes endpoints
+//!
+
 use internal::models::{Balance, Book, Order, OrdersInstant, Payment, Ticker, Trade};
 use serde_json::Value;
 

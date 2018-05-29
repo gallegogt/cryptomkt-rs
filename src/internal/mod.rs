@@ -1,3 +1,9 @@
+//!
+//! Módulo interno `internal`
+//!
+//! En este módulo se encuentran las implementaciones de más bajo nivel para el acceso
+//! al API junto con sus respectivas pruebas
+//!
 extern crate hyper;
 extern crate reqwest;
 extern crate ring;
