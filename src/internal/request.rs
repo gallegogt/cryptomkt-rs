@@ -1,7 +1,7 @@
 extern crate reqwest;
 
 use self::reqwest::Client;
-use self::reqwest::header::Headers;
+use reqwest::header::HeaderMap;
 use self::reqwest::{StatusCode, Url};
 use std::collections::HashMap;
 
@@ -14,9 +14,9 @@ pub trait HttpReq {
     ///
     ///  Argumentos:
     ///     url: Url
-    ///     headers: Headers
+    ///     headers: HeaderMap
     ///
-    fn get(&self, url: Url, headers: Headers) -> Result<String, CryptoMktErrorType>;
+    fn get(&self, url: Url, headers: HeaderMap) -> Result<String, CryptoMktErrorType>;
     ///
     ///  Argumentos:
     ///     url: Url
@@ -26,7 +26,7 @@ pub trait HttpReq {
     fn post(
         &self,
         url: Url,
-        headers: Headers,
+        headers: HeaderMap,
         payload: HashMap<String, String>,
     ) -> Result<String, CryptoMktErrorType>;
 }
@@ -57,41 +57,41 @@ impl CryptoMktRequest {
     ///
     pub fn translate_errors<'c>(&self, prefix: &'c str, status: StatusCode) -> CryptoMktErrorType {
         match status {
-            StatusCode::Unauthorized => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::Unauthorized);
+            StatusCode::UNAUTHORIZED => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::UNAUTHORIZED);
                 CryptoMktErrorType::RequestUnauthorized
             }
 
-            StatusCode::Forbidden => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::Forbidden);
+            StatusCode::FORBIDDEN => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::FORBIDDEN);
                 CryptoMktErrorType::RequestForbidden
             }
-            StatusCode::NotFound => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::NotFound);
+            StatusCode::NOT_FOUND => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::NOT_FOUND);
                 CryptoMktErrorType::RequestNotFound
             }
-            StatusCode::MethodNotAllowed => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::MethodNotAllowed);
+            StatusCode::METHOD_NOT_ALLOWED => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::METHOD_NOT_ALLOWED);
                 CryptoMktErrorType::RequestMethodNotAllowed
             }
-            StatusCode::NotAcceptable => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::NotAcceptable);
+            StatusCode::NOT_ACCEPTABLE => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::NOT_ACCEPTABLE);
                 CryptoMktErrorType::RequestNotAcceptable
             }
-            StatusCode::Gone => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::Gone);
+            StatusCode::GONE => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::GONE);
                 CryptoMktErrorType::RequestGone
             }
-            StatusCode::TooManyRequests => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::TooManyRequests);
+            StatusCode::TOO_MANY_REQUESTS => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::TOO_MANY_REQUESTS);
                 CryptoMktErrorType::RequestTooManyRequests
             }
-            StatusCode::InternalServerError => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::InternalServerError);
+            StatusCode::INTERNAL_SERVER_ERROR => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::INTERNAL_SERVER_ERROR);
                 CryptoMktErrorType::RequestInternalServerError
             }
-            StatusCode::ServiceUnavailable => {
-                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::ServiceUnavailable);
+            StatusCode::SERVICE_UNAVAILABLE => {
+                error!(target: "cryptomkt", "{}: StatusCode: {:?}", prefix, StatusCode::SERVICE_UNAVAILABLE);
                 CryptoMktErrorType::RequestServiceUnavailable
             }
             status => {
@@ -110,13 +110,13 @@ impl HttpReq for CryptoMktRequest {
     ///
     ///  Argumentos:
     ///     url: Url
-    ///     headers: Headers
+    ///     headers: HeaderMap
     ///
-    fn get(&self, url: Url, headers: Headers) -> CryptoMktResult<String> {
+    fn get(&self, url: Url, headers: HeaderMap) -> CryptoMktResult<String> {
         let result = self.client.get(url).headers(headers).send();
         match result {
             Ok(mut resp) => match resp.status() {
-                StatusCode::Ok => match resp.text() {
+                StatusCode::OK => match resp.text() {
                     Ok(txt) => Ok(txt),
                     Err(e) => {
                         error!(target: "cryptomkt", "GET: Request Text details: {:?}", e);
@@ -134,20 +134,20 @@ impl HttpReq for CryptoMktRequest {
     ///
     ///  Argumentos:
     ///     url: Url
-    ///     headers: Headers
+    ///     headers: HeaderMap
     ///     payload: Datos a enviar a la URL especificada
     ///
     fn post(
         &self,
         url: Url,
-        headers: Headers,
+        headers: HeaderMap,
         payload: HashMap<String, String>,
     ) -> CryptoMktResult<String> {
         let result = self.client.post(url).headers(headers).form(&payload).send();
 
         match result {
             Ok(mut resp) => match resp.status() {
-                StatusCode::Ok => match resp.text() {
+                StatusCode::OK => match resp.text() {
                     Ok(txt) => Ok(txt),
                     Err(e) => {
                         error!(target: "cryptomkt", "POST: Response Details: {:?}", e);

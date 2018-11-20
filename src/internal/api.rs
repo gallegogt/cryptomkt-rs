@@ -1,25 +1,25 @@
 extern crate ring;
-use std::time::{SystemTime, UNIX_EPOCH};
 use std::collections::HashMap;
 use std::fmt::Write;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use self::ring::{digest, hmac};
+use reqwest::header::{HeaderMap, HeaderValue};
 use reqwest::Url;
-use hyper::header::Headers;
 
 use serde::de::DeserializeOwned;
 use serde_json;
 // use log::Level;
 
 /// X-MKT-APIKEY: La API key como un string
-header! { (XMktApiKey, "X-MKT-APIKEY") => [String] }
+const X_MKT_APIKEY: &'static str = "X-MKT-APIKEY";
 /// X-MKT-SIGNATURE: El mensaje firmado generado por el usuario (ver abajo)
-header! { (XMktSignature, "X-MKT-SIGNATURE") => [String] }
+const X_MKT_SIGNATURE: &'static str = "X-MKT-SIGNATURE";
 /// X-MKT-TIMESTAMP: Un timestamp para tu llamada
-header! { (XMktTimestamp, "X-MKT-TIMESTAMP") => [String] }
+const X_MKT_TIMESTAMP: &'static str = "X-MKT-TIMESTAMP";
 
-use internal::request::HttpReq;
 use internal::errors::{CryptoMktErrorType, CryptoMktResult};
+use internal::request::HttpReq;
 
 ///
 /// API Interna
@@ -211,14 +211,23 @@ where
         payload: &HashMap<String, String>,
         is_public: bool,
         is_get: bool,
-    ) -> Headers {
-        let mut headers = Headers::new();
+    ) -> HeaderMap {
+        let mut headers = HeaderMap::new();
         if !is_public {
             let msg_to_sign = self.build_signature_format(endpoint, &payload, is_get);
             let timestamp = msg_to_sign.split("/").collect::<Vec<&str>>();
-            headers.set(XMktApiKey(self.api_key.to_string()));
-            headers.set(XMktSignature(self.sign_msg(msg_to_sign.as_str())));
-            headers.set(XMktTimestamp(timestamp.first().unwrap().to_string()))
+            headers.insert(
+                X_MKT_APIKEY,
+                HeaderValue::from_str(self.api_key.as_str()).unwrap(),
+            );
+            headers.insert(
+                X_MKT_SIGNATURE,
+                HeaderValue::from_str(self.sign_msg(msg_to_sign.as_str()).as_str()).unwrap(),
+            );
+            headers.insert(
+                X_MKT_TIMESTAMP,
+                HeaderValue::from_str(timestamp.first().unwrap()).unwrap(),
+            );
         }
         headers
     }

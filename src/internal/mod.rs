@@ -17,16 +17,16 @@ pub mod response;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use self::request::HttpReq;
-    use self::errors::CryptoMktResult;
-    use self::api::Api;
+    use serde_json::json;
+    use internal::request::HttpReq;
+    use internal::errors::CryptoMktResult;
+    use internal::api::Api;
 
     use std::collections::HashMap;
-    use self::reqwest::Url;
-    use self::hyper::header::Headers;
+    use reqwest::Url;
+    use reqwest::header::HeaderMap;
 
-    use self::response::{BalanceResponse, BookResponse, EmptyResponse, MarketResponse,
+    use response::{BalanceResponse, BookResponse, EmptyResponse, MarketResponse,
                          OrderResponse, OrdersInstantResponse, SimpleOrderResponse,
                          TickerResponse, TradeResponse};
 
@@ -58,21 +58,21 @@ mod tests {
         ///
         ///  Argumentos:
         ///     url: Url
-        ///     headers: Headers
+        ///     headers: HeaderMap
         ///
-        fn get(&self, _url: Url, _headers: Headers) -> CryptoMktResult<String> {
+        fn get(&self, _url: Url, _headers: HeaderMap) -> CryptoMktResult<String> {
             Ok(self.resp_for_get.clone())
         }
         ///
         ///  Argumentos:
         ///     url: Url
-        ///     headers: Headers
+        ///     headers: HeaderMap
         ///     payload: Datos a enviar a la URL especificada
         ///
         fn post(
             &self,
             _url: Url,
-            _headers: Headers,
+            _headers: HeaderMap,
             _payload: HashMap<String, String>,
         ) -> CryptoMktResult<String> {
             Ok(self.resp_for_post.clone())
