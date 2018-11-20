@@ -26,7 +26,7 @@ doc = true
 
 [dependencies]
 # HTTP Request
-hyper = "^0.11"
+hyper = "^0.12"
 # The core APIs, including the Serialize and Deserialize traits. Always
 # required when using Serde.
 serde = "^1.0"
@@ -37,9 +37,9 @@ serde_derive = "^1.0"
 # but you may be using a different one.
 serde_json = "1.0"
 # HTTP Request Library
-reqwest="^0.8"
+reqwest="^0.9"
 bytes = "^0.4"
 # Log
 log = "^0.4"
 # Cryptography
-ring = "^0.12"
+ring = "^0.13"
