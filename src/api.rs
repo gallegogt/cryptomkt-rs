@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use internal::api::Api;
 use internal::errors::CryptoMktErrorType;
 use internal::request::CryptoMktRequest;
 use serde::de::DeserializeOwned;
+use std::collections::HashMap;
 
 ///
 /// HTTP methods supported by the API

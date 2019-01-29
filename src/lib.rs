@@ -1,48 +1,35 @@
-///
-/// cryptomkt-rs provides a simple and powerful implementation for CryptoMarket API.
-///
-/// Example:
-///
-/// ```
-/// extern crate cryptomkt;
-/// use cryptomkt::{CryptoMktClient, OrderType};
-/// const API_KEY: &'static str = "<API_KEY>";
-/// const API_SECRET: &'static str = "<API SECRET>";
-/// fn main() {
-///     let client = CryptoMktClient::new(API_KEY, API_SECRET);
-///     let markets = client.get_markets();
-///     for m in markets.iter() {
-///         println!("{}", m.get_name());
-///         match m.get_current_ticker() {
-///             Ok(ticker) => {
-///                 println!("{:?}", ticker);
-///             }
-///             Err(e) => {
-///                 println!("{:?}", e);
-///             }
-///         }
-///         println!("------- Orders ------");
-///         match m.get_orders_book(OrderType::Buy, 0, 20) {
-///             Ok(orders) => {
-///                 println!("{:?}", orders);
-///             }
-///             Err(e) => {
-///                 println!("{:?}", e);
-///             }
-///         }
-///         println!("------- Trades ------");
-///         match m.get_trades("2018-05-15", "2018-05-16", 0, 20) {
-///             Ok(trades) => {
-///                 println!("{:?}", trades);
-///             }
-///             Err(e) => {
-///                 println!("{:?}", e);
-///             }
-///         }
-///     }
-/// }
-/// ```
-
+//!
+//! cryptomkt-rs provides a simple and powerful implementation for CryptoMarket API.
+//!
+//! Example where the last ticker is shown for each market available in the exchange market Criptomarket
+//!
+//! ```
+//! extern crate cryptomkt;
+//! use cryptomkt::{CryptoMktClient, OrderType};
+//!
+//! const API_KEY: &'static str = "<API_KEY>";
+//! const API_SECRET: &'static str = "<API SECRET>";
+//!
+//! fn main() {
+//!
+//!     let client = CryptoMktClient::new(API_KEY, API_SECRET);
+//!
+//!     // Get the markets available in the exchange
+//!     let markets = client.get_markets();
+//!     for m in markets.iter() {
+//!         println!("{}", m.get_name());
+//!
+//!         // GET current Ticker
+//!         match m.get_current_ticker() {
+//!             Ok(ticker) => {
+//!                 println!("{:?}", ticker);
+//!             }
+//!             Err(e) => {
+//!                 println!("{:?}", e);
+//!             }
+//!         }
+//! }
+//! ```
 
 #[macro_use]
 extern crate log;
@@ -53,13 +40,13 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-mod internal;
 mod api;
-mod market;
 mod client;
+mod internal;
+mod market;
 
 pub use api::{CryptoMktApi, RequestMethod};
-pub use internal::response;
-pub use internal::models;
-pub use market::{Market, OrderType};
 pub use client::CryptoMktClient;
+pub use internal::models;
+pub use internal::response;
+pub use market::{Market, OrderType};

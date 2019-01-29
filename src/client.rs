@@ -1,39 +1,43 @@
+//!
+//! ## Client Implementation
+//!
+//! Print the current tricker of all available markets
+//!
+//! ```
+//! extern crate cryptomkt;
+//! use cryptomkt::{CryptoMktClient, OrderType};
+//!
+//! const API_KEY: &'static str = "<API_KEY>";
+//! const API_SECRET: &'static str = "<API SECRET>";
+//!
+//! let client = CryptoMktClient::new(API_KEY, API_SECRET);
+//! let markets = client.get_markets();
+//! for m in markets.iter() {
+//!     println!("{}", m.get_name());
+//!
+//!     // Get Current Ticker
+//!     match m.get_current_ticker() {
+//!         Ok(ticker) => {
+//!           println!("{:?}", ticker);
+//!         }
+//!         Err(e) => {
+//!            println!("{:?}", e);
+//!         }
+//!       }
+//!     }
+//! ```
+//!
+
 use api::{CryptoMktApi, RequestMethod};
 use market::Market;
 
 use internal::errors::CryptoMktResult;
 use internal::models::{Balance, Payment};
-use internal::response::{BalanceResponse, MarketResponse, PaymentResponse, PaymentListResponse};
+use internal::response::{BalanceResponse, MarketResponse, PaymentListResponse, PaymentResponse};
 use std::collections::HashMap;
 
 ///
-/// Client implementation for the API
-///
-/// # Ejemplo
-///
-/// Print the current tricker of all available markets
-///
-/// ```
-/// extern crate cryptomkt;
-/// use cryptomkt::{CryptoMktClient, OrderType};
-///
-/// const API_KEY: &'static str = "<API_KEY>";
-/// const API_SECRET: &'static str = "<API SECRET>";
-///
-/// let client = CryptoMktClient::new(API_KEY, API_SECRET);
-/// let markets = client.get_markets();
-/// for m in markets.iter() {
-///     println!("{}", m.get_name());
-///     match m.get_current_ticker() {
-///         Ok(ticker) => {
-///           println!("{:?}", ticker);
-///         }
-///         Err(e) => {
-///            println!("{:?}", e);
-///         }
-///       }
-///     }
-/// ```
+/// CryptoMkt Client
 ///
 pub struct CryptoMktClient {
     api: CryptoMktApi,
@@ -175,9 +179,11 @@ impl CryptoMktClient {
             params.insert("limit".to_string(), format!("{}", limit));
         }
 
-        let resp =
-            self.api
-                .call::<PaymentListResponse>(RequestMethod::Get(false), "payment/status", params);
+        let resp = self.api.call::<PaymentListResponse>(
+            RequestMethod::Get(false),
+            "payment/status",
+            params,
+        );
 
         match resp {
             Ok(value) => Ok(value.data),

@@ -59,7 +59,6 @@ pub struct Trade {
     pub market: String,
 }
 
-
 ///
 /// Amount
 ///
@@ -116,8 +115,6 @@ pub struct Order {
     pub executed_at: String,
 }
 
-
-
 ///
 /// An instant order corresponds to a purchase or sale request within the Instant
 /// Exchange of CryptoMarket.
@@ -137,7 +134,6 @@ pub struct OrdersInstant {
     pub required: String,
 }
 
-
 ///
 /// A balance corresponds to the status of your cryptocurrency and local wallets
 ///
@@ -150,7 +146,6 @@ pub struct Balance {
     /// Countable balance
     pub balance: String,
 }
-
 
 ///
 /// A balance corresponds to the status of your cryptocurrency and local wallets

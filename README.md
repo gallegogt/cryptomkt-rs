@@ -2,7 +2,7 @@
 
 Library for access to the cryptomarket platform (https://www.cryptomkt.com)
 
-## Ejemplo de uso
+## Example
 
 ```rust
 ///
@@ -22,6 +22,8 @@ fn main() {
     let markets = client.get_markets();
     for m in markets.iter() {
         println!("{}", m.get_name());
+
+        // Get Current Ticker
         match m.get_current_ticker() {
             Ok(ticker) => {
                 println!("{:?}", ticker);

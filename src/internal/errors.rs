@@ -23,7 +23,7 @@ pub enum CryptoMktErrorType {
     // 400 => Petición inválida
     BadRequest,
     //
-    MalformedResource
+    MalformedResource,
 }
 
 // Define alea generico al Result para  CryptoMktErrorType

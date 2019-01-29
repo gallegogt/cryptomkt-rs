@@ -1,11 +1,11 @@
 extern crate reqwest;
 
 use self::reqwest::Client;
-use reqwest::header::HeaderMap;
 use self::reqwest::{StatusCode, Url};
+use reqwest::header::HeaderMap;
 use std::collections::HashMap;
 
-use internal::errors::{CryptoMktErrorType,CryptoMktResult};
+use internal::errors::{CryptoMktErrorType, CryptoMktResult};
 
 ///
 /// Definición que deben cumplir para poder extaer datos mediante HTTP

@@ -1,8 +1,10 @@
 use api::{CryptoMktApi, RequestMethod};
 use internal::errors::CryptoMktResult;
 use internal::models::{Book, Order, OrdersInstant, Ticker, Trade};
-use internal::response::{BookResponse, EmptyResponse, OrderResponse, OrdersInstantResponse,
-                         SimpleOrderResponse, TickerResponse, TradeResponse};
+use internal::response::{
+    BookResponse, EmptyResponse, OrderResponse, OrdersInstantResponse, SimpleOrderResponse,
+    TickerResponse, TradeResponse,
+};
 use std::collections::HashMap;
 use std::fmt::{self, Display, Formatter};
 
@@ -64,7 +66,8 @@ impl Market {
     pub fn get_current_ticker(&self) -> CryptoMktResult<Ticker> {
         let mut params = HashMap::new();
         params.insert("market".to_string(), self.name.clone());
-        let resp = self.api
+        let resp = self
+            .api
             .call::<TickerResponse>(RequestMethod::Get(true), "ticker", params);
         match resp {
             Ok(value) => Ok(value.data[0].clone()),
@@ -87,7 +90,8 @@ impl Market {
         params.insert("page".to_string(), format!("{}", page));
         params.insert("limit".to_string(), format!("{}", limit));
 
-        let resp = self.api
+        let resp = self
+            .api
             .call::<BookResponse>(RequestMethod::Get(true), "book", params);
         match resp {
             Ok(value) => Ok(value.data),
@@ -112,7 +116,8 @@ impl Market {
         params.insert("page".to_string(), format!("{}", page));
         params.insert("limit".to_string(), format!("{}", limit));
 
-        let resp = self.api
+        let resp = self
+            .api
             .call::<TradeResponse>(RequestMethod::Get(true), "trades", params);
         match resp {
             Ok(value) => Ok(value.data),
@@ -139,7 +144,8 @@ impl Market {
             OrderState::Executed => "orders/executed",
         };
 
-        let resp = self.api
+        let resp = self
+            .api
             .call::<OrderResponse>(RequestMethod::Get(false), endpoint, params);
         match resp {
             Ok(value) => Ok(value.data),
@@ -161,7 +167,8 @@ impl Market {
         params.insert("price".to_string(), format!("{}", price));
         params.insert("type".to_string(), order_type.to_string().to_lowercase());
 
-        let resp = self.api
+        let resp = self
+            .api
             .call::<OrderResponse>(RequestMethod::Post, "orders/create", params);
         match resp {
             Ok(value) => Ok(value.data),

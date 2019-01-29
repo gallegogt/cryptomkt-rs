@@ -11,9 +11,12 @@ const API_SECRET: &'static str = "<API SECRET>";
 fn main() {
     let client = CryptoMktClient::new(API_KEY, API_SECRET);
 
+    // Get all markets available
     let markets = client.get_markets();
     for m in markets.iter() {
         println!("{}", m.get_name());
+
+        // Get the current ticker for the market
         match m.get_current_ticker() {
             Ok(ticker) => {
                 println!("{:?}", ticker);

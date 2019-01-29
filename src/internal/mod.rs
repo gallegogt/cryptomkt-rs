@@ -9,27 +9,27 @@ extern crate reqwest;
 extern crate ring;
 extern crate serde;
 
-pub mod errors;
-pub mod request;
 pub mod api;
+pub mod errors;
 pub mod models;
+pub mod request;
 pub mod response;
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-    use internal::request::HttpReq;
-    use internal::errors::CryptoMktResult;
     use internal::api::Api;
+    use internal::errors::CryptoMktResult;
+    use internal::request::HttpReq;
+    use serde_json::json;
 
-    use std::collections::HashMap;
-    use reqwest::Url;
     use reqwest::header::HeaderMap;
+    use reqwest::Url;
+    use std::collections::HashMap;
 
-    use response::{BalanceResponse, BookResponse, EmptyResponse, MarketResponse,
-                         OrderResponse, OrdersInstantResponse, SimpleOrderResponse,
-                         TickerResponse, TradeResponse};
-
+    use response::{
+        BalanceResponse, BookResponse, EmptyResponse, MarketResponse, OrderResponse,
+        OrdersInstantResponse, SimpleOrderResponse, TickerResponse, TradeResponse,
+    };
     const API_KEY: &'static str = "FS24FJ7";
     const SECRET_KEY: &'static str = "SFT23GSD";
 
@@ -162,7 +162,8 @@ mod tests {
         let api = Api::<MockRequest>::new(API_KEY, SECRET_KEY, Box::new(mock_transport));
 
         let expected = json!({"status": "success","data": ["ETHARS","ETHCLP"]});
-        let resp = api.get_edge::<MarketResponse>("market", HashMap::new(), true)
+        let resp = api
+            .get_edge::<MarketResponse>("market", HashMap::new(), true)
             .unwrap();
 
         assert_eq!(
@@ -193,7 +194,8 @@ mod tests {
         });
         let mut ticker_params = HashMap::new();
         ticker_params.insert("market".to_string(), "ETHARS".to_string());
-        let resp = api.get_edge::<TickerResponse>("ticker", ticker_params, true)
+        let resp = api
+            .get_edge::<TickerResponse>("ticker", ticker_params, true)
             .unwrap();
 
         assert_eq!(
@@ -275,7 +277,8 @@ mod tests {
         params.insert("end".to_string(), "2017-05-30".to_string());
         params.insert("page".to_string(), "2".to_string());
 
-        let resp = api.get_edge::<TradeResponse>("trades", params, true)
+        let resp = api
+            .get_edge::<TradeResponse>("trades", params, true)
             .unwrap();
 
         assert_eq!(
@@ -329,7 +332,8 @@ mod tests {
         params.insert("market".to_string(), "ETHCLP".to_string());
         params.insert("page".to_string(), "0".to_string());
 
-        let resp = api.get_edge::<OrderResponse>("orders/active", params, true)
+        let resp = api
+            .get_edge::<OrderResponse>("orders/active", params, true)
             .unwrap();
 
         assert_eq!(
@@ -373,7 +377,8 @@ mod tests {
         params.insert("market".to_string(), "ETHCLP".to_string());
         params.insert("page".to_string(), "1".to_string());
 
-        let resp = api.get_edge::<OrderResponse>("orders/executed", params, true)
+        let resp = api
+            .get_edge::<OrderResponse>("orders/executed", params, true)
             .unwrap();
 
         assert_eq!(
@@ -431,7 +436,8 @@ mod tests {
         params.insert("price".to_string(), "10000".to_string());
         params.insert("type".to_string(), "buy".to_string());
 
-        let resp = api.post_edge::<SimpleOrderResponse>("orders/create", params)
+        let resp = api
+            .post_edge::<SimpleOrderResponse>("orders/create", params)
             .unwrap();
 
         assert_eq!(
@@ -472,7 +478,8 @@ mod tests {
         let mut params = HashMap::new();
         params.insert("id".to_string(), "M103975".to_string());
 
-        let resp = api.get_edge::<SimpleOrderResponse>("orders/status", params, true)
+        let resp = api
+            .get_edge::<SimpleOrderResponse>("orders/status", params, true)
             .unwrap();
 
         assert_eq!(
@@ -515,7 +522,8 @@ mod tests {
         let mut params = HashMap::new();
         params.insert("id".to_string(), "M103975".to_string());
 
-        let resp = api.post_edge::<SimpleOrderResponse>("orders/cancel", params)
+        let resp = api
+            .post_edge::<SimpleOrderResponse>("orders/cancel", params)
             .unwrap();
 
         assert_eq!(
@@ -557,7 +565,8 @@ mod tests {
         params.insert("type".to_string(), "sell".to_string());
         params.insert("amount".to_string(), "159".to_string());
 
-        let resp = api.get_edge::<OrdersInstantResponse>("orders/instant/get", params, false)
+        let resp = api
+            .get_edge::<OrdersInstantResponse>("orders/instant/get", params, false)
             .unwrap();
 
         assert_eq!(
@@ -592,7 +601,8 @@ mod tests {
         params.insert("type".to_string(), "buy".to_string());
         params.insert("amount".to_string(), "10".to_string());
 
-        let resp = api.post_edge::<EmptyResponse>("orders/instant/create", params)
+        let resp = api
+            .post_edge::<EmptyResponse>("orders/instant/create", params)
             .unwrap();
 
         assert_eq!(
@@ -618,7 +628,8 @@ mod tests {
         });
 
         let params = HashMap::new();
-        let resp = api.get_edge::<BalanceResponse>("balance", params, false)
+        let resp = api
+            .get_edge::<BalanceResponse>("balance", params, false)
             .unwrap();
 
         for it in 1..resp.data.len() {
