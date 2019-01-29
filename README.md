@@ -1,12 +1,12 @@
 # Criptomarket API
 
-Biblioteca para el acceso a la plataforma cryptomarket (https://www.cryptomkt.com)
+Library for access to the cryptomarket platform (https://www.cryptomkt.com)
 
 ## Ejemplo de uso
 
 ```rust
 ///
-/// Ejemplo de acceso a la API Publica de cryptomkt
+/// Example of access to the Public API of cryptomkt
 ///
 extern crate cryptomkt;
 
@@ -18,6 +18,7 @@ const API_SECRET: &'static str = "<API SECRET>";
 fn main() {
     let client = CryptoMktClient::new(API_KEY, API_SECRET);
 
+    // Get Markets
     let markets = client.get_markets();
     for m in markets.iter() {
         println!("{}", m.get_name());
@@ -30,6 +31,7 @@ fn main() {
             }
         }
 
+        // Get Orders Book
         println!("------- Orders ------");
         match m.get_orders_book(OrderType::Buy, 0, 20) {
             Ok(orders) => {
@@ -40,6 +42,7 @@ fn main() {
             }
         }
 
+        // Get Trades
         println!("------- Trades ------");
         match m.get_trades("2018-05-15", "2018-05-16", 0, 20) {
             Ok(trades) => {

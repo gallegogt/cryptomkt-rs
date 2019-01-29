@@ -5,31 +5,31 @@ use internal::request::CryptoMktRequest;
 use serde::de::DeserializeOwned;
 
 ///
-/// Métodos de encuestas soportados por el API
+/// HTTP methods supported by the API
 ///
 pub enum RequestMethod {
     /// HTTP Request POST
     Post,
-    /// HTTP Request GET, El parámetro define si la petición es para un
-    /// endpoint publico o no
+    /// HTTP Request GET, The parameter defines whether the request is
+    /// for a public endpoint or not
     Get(bool),
 }
 
 ///
 /// # Cryptomkt API
 ///
-/// Permite el acceso al API de cryptomarket si conoces bien los diferentes
-/// endpoints. Para más información sobre los endpoints ir a [Developers Cryptomkt](http://developers.cryptomkt.com/)
+/// Allows access to the cryptomarket API. For more information about
+/// endpoints go to [Developers Cryptomkt] (http://developers.cryptomkt.com/)
 ///
-/// ## Ejemplo
+/// ## Example
 ///
 /// ```
 /// extern crate cryptomkt;
 /// use cryptomkt::CryptoMktApi;
 ///
 /// let api = CryptoMktApi::new("<API Key>", "<Secret Key>");
-/// println!("Api version: {}", api.version());
-/// println!("Api domain: {}", api.domain());
+/// println!("API version: {}", api.version());
+/// println!("API domain: {}", api.domain());
 /// ```
 ///
 #[derive(Debug, Clone)]
@@ -39,7 +39,11 @@ pub struct CryptoMktApi {
 
 impl CryptoMktApi {
     ///
-    /// Crea la nueva instancia del API
+    /// Create the new API instance
+    ///
+    /// Arguments:
+    ///     api_key: API Key as string
+    ///     secret_key: Secret Key as string
     ///
     pub fn new<'a>(api_key: &'a str, secret_key: &'a str) -> Self {
         CryptoMktApi {
@@ -52,21 +56,21 @@ impl CryptoMktApi {
     }
 
     ///
-    /// Devuelve el dominio
+    /// Get the domain
     ///
     pub fn domain(&self) -> String {
         self.i_api.domain()
     }
 
     ///
-    /// Devuelve la version del API
+    /// Get the API Version
     ///
     pub fn version(&self) -> String {
         self.i_api.api_version()
     }
 
     ///
-    /// Realiza una petición HTTP al servidor
+    /// Function that you can use to make request over Cryptomarket API
     ///
     /// ```
     /// extern crate cryptomkt;
@@ -90,10 +94,10 @@ impl CryptoMktApi {
     /// }
     /// ```
     ///
-    /// #Argumentos
-    ///     `method`: Enum que representa el método de encuesta al servidor: Get(is_public) | Post
-    ///     `endpoint`: Cadena de texto con el endpoint de la API (Ej: "orders/active" ), no debe comenzar por "/"
-    ///     `payload`: Hashmap que representan los datos de encuesta para el servidor
+    /// #Arguments
+    ///     `method`: Enum representing the server request method: Get (is_public) | Post
+    ///     `endpoint`: Endpoint
+    ///     `payload`: Payload
     ///
     pub fn call<'a, T>(
         &self,

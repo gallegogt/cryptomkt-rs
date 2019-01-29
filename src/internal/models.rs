@@ -1,179 +1,194 @@
 use serde_json::Value;
 
-// ============ Ticker ==============
-/// El ticker es una visión general de alto nivel del estado del mercado.
+///
+/// The ticker is a high-level overview of the state of the market. It will show you
+/// the current bid and ask, as well as the latest market price. It also includes
+/// information such as the daily volume and how much the price has moved during the last day.
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Ticker {
-    /// Precio más alto
+    /// Highest price
     pub high: String,
-    /// Precio más bajo
+    /// Lowest price
     pub low: String,
-    /// Precio de compra
+    /// Purchase price
     pub ask: String,
-    /// Precio de venta
+    /// Sale price
     pub bid: String,
-    /// Precio última transacción
+    /// Last transaction price
     pub last_price: String,
-    /// Volumen del mercado
+    /// Market volume
     pub volume: String,
-    /// Fecha de consulta
+    /// Market pair
     pub timestamp: String,
-    /// Par de mercado
+    /// Date of consultation
     pub market: String,
 }
 
-// ============ Book ==============
-/// Ordenes activas
+///
+/// A market order corresponds to a purchase or sale request within the
+/// Exchange Market of CryptoMarket.
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Book {
-    /// Precio límite de la orden
+    /// Order limit price
     pub price: String,
-    /// Cantidad de la orden
+    /// Order quantity
     pub timestamp: String,
-    /// Fecha de creación
+    /// Creation date
     pub amount: String,
 }
 
-// ============ Trades ==============
-/// Trades realizados en CryptoMarket.
+///
+/// They correspond to transactions made in CryptoMarket.
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Trade {
-    /// Tipo de transacción. buy o sell
+    /// Transaction Type. buy or sell
     pub market_taker: String,
-    /// Precio al cual se realizó la transacción
+    /// Price at which the transaction was made
     pub price: String,
-    /// Cantidad de la transacción
+    /// Amount of the transaction
     pub amount: String,
-    /// ID de la transacción
+    /// ID of the transaction
     #[serde(default)]
     pub tid: String,
-    /// Fecha de la transacción
+    /// Date of the transaction
     pub timestamp: String,
-    /// Par de mercado donde se realizó la transacción
+    /// Market pair where the transaction was made
     pub market: String,
 }
 
-// ============ Order ==============
+
+///
 /// Amount
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Amount {
-    /// Cantidad original de la orden
+    /// Original quantity of the order
     #[serde(default)]
     pub original: String,
-    /// Cantidad restante de la orden. Solo en órdenes activas
+    /// Remaining amount of the order. Only in active orders
     #[serde(default)]
     pub remaining: String,
-    /// Cantidad ejecutada de la orden. Solo en órdenes ejecutadas
+    /// Quantity executed of the order. Only in executed orders
     #[serde(default)]
     pub executed: String,
 }
 
-/// Orden del Mercado, corresponde a una solicitud de compra o
-/// venta dentro del Exchange Market de CryptoMarket.
+///
+/// A market order corresponds to a purchase or sale request within the
+/// Exchange Market of CryptoMarket.
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Order {
-    /// ID de la orden
+    /// Order ID
     #[serde(default)]
     pub id: String,
-    /// Estado de la orden. active o executed
+    /// Order Status, active o executed
     #[serde(default)]
     pub status: String,
-    /// Tipo de orden. buy o sell
+    /// Order Type. buy o sell
     #[serde(rename = "type")]
     pub order_type: String,
-    /// Precio límite de la orden
+    /// Order limit price
     #[serde(default)]
     pub price: String,
-    /// Cantidad
+    /// Ammount
     pub amount: Amount,
-    /// Precio de ejecución
+    /// Execution price
     #[serde(default)]
     pub execution_price: Value, // null / String
-    /// Precio de ejecución promedio ponderado. 0 si no se ejecuta.
+    /// Average weighted execution price. 0 if it is not executed.
     #[serde(default)]
     pub avg_execution_price: String,
-    /// Par de mercado
+    /// Market pair
     #[serde(default)]
     pub market: String,
-    /// Fecha de creación
+    /// Creation date
     #[serde(default)]
     pub created_at: String,
-    /// Fecha de actualización. Solo en órdenes activas
+    /// Update date. Only in active orders
     #[serde(default)]
     pub updated_at: String,
-    /// Fecha de ejecución. Solo en órdenes ejecutadas
+    /// Date of execution Only in executed orders
     #[serde(default)]
     pub executed_at: String,
 }
 
-// ============ Órdenes instantáneas ==============
 
-/// Una orden instantánea corresponde a una solicitud de compra o venta dentro del Instant
-/// Exchange de CryptoMarket.
+
+///
+/// An instant order corresponds to a purchase or sale request within the Instant
+/// Exchange of CryptoMarket.
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct OrdersInstant {
-    /// Si es una petición de compra buy, corresponde a la cantidad de
-    /// criptomoneda a recibir si se efectuase la compra. Si es una petición
-    /// de venta sell, corresponde a la cantidad de moneda local a recibir si
-    /// se efectuase la venta.
+    /// If it is a purchase purchase request, it corresponds to the amount of
+    /// cryptocurrency to receive if the purchase was made. If it is a sell sell
+    /// request, it corresponds to the amount of local currency to be received if the sale is made.
     #[serde(default)]
     pub obtained: String,
-    /// Si es una petición de tipo buy, corresponde a la cantidad de moneda
-    /// local que se quiere utilizar para realizar la compra. Si type es sell,
-    /// corresponde a la cantidad de criptomoneda que se quiere utilizar para la venta.
-    /// Monto menor o igual a la cantidad solicitada. Modificado por la liquidez del mercado.
+    /// If it is a buy type request, it corresponds to the amount of local currency that you want
+    /// to use to make the purchase. If type is sell, it corresponds to the amount of cryptocurrency
+    /// that you want to use for the sale. Amount less than or equal to the amount requested. Modified
+    /// by market liquidity.
     #[serde(default)]
     pub required: String,
 }
 
-// ============ Balance ==============
-/// Un balance corresponde al estado de tus billeteras de criptomonedas y locales
+
+///
+/// A balance corresponds to the status of your cryptocurrency and local wallets
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Balance {
-    /// Billetera en CryptoMarket
+    /// Wallet at CryptoMarket
     pub wallet: String,
-    /// Saldo disponible
+    /// Balance available
     pub available: String,
-    /// Saldo contable
+    /// Countable balance
     pub balance: String,
 }
 
-// ============ Orden pago ==============
-/// Un balance corresponde al estado de tus billeteras de criptomonedas y locales
+
+///
+/// A balance corresponds to the status of your cryptocurrency and local wallets
+///
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Payment {
-    /// ID interno de la orden de pago
+    /// Internal ID of the payment order
     pub id: i32,
-    /// ID externo
+    /// External ID
     pub external_id: String,
-    /// Estado de la orden de pago. Ver más abajo
+    /// State of the payment order. See below
     pub status: String,
-    /// Monto de la orden de pago
+    /// Amount of the payment order
     pub to_receive: String,
-    /// Tipo de moneda a recibir por la orden de pago
+    /// Type of currency to be received for the payment order
     pub to_receive_currency: String,
-    /// Cantidad que espera la orden para ser aceptada
+    /// Amount waiting for the order to be accepted
     pub expected_amount: String,
-    /// Tipo de moneda que espera la orden para ser aceptada
+    /// Type of currency waiting for the order to be accepted
     pub expected_currency: String,
-    /// Dirección de la orden de pago
+    /// Payment order address
     pub deposit_address: String,
-    /// Correo electrónico de contacto para coordinar reembolsos
+    /// Contact email to coordinate refunds
     pub refund_email: String,
-    /// Url de la imagen QR de la orden de pago
+    /// Url of the image of the order of payment QR
     pub qr: String,
-    /// Observaciones
+    /// Observations
     pub obs: String,
-    /// Url de notificación
+    /// Notification URL
     pub callback_url: String,
-    /// Url de error
+    /// Error url
     pub error_url: String,
-    /// Url de éxito
+    /// Success URL
     pub success_url: String,
-    /// Url de voucher de orden de pago
+    /// Payment order voucher url
     pub payment_url: String,
-    /// Fecha de creación de la orden de pago
+    /// Creation date of the payment order
     pub created_at: String,
-    /// Fecha de actualización de la orden de pago
+    /// Date of update of the payment order
     pub updated_at: String,
 }

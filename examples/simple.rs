@@ -1,5 +1,5 @@
 ///
-/// Ejemplo de acceso a la API Publica de cryptomkt
+/// Example
 ///
 extern crate cryptomkt;
 

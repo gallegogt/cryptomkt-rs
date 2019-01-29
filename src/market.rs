@@ -7,9 +7,7 @@ use std::collections::HashMap;
 use std::fmt::{self, Display, Formatter};
 
 ///
-/// Define los tipos de la Orden
-///     Compra
-///     Venta
+/// Order Type
 ///
 #[derive(Debug)]
 pub enum OrderType {
@@ -24,7 +22,7 @@ impl Display for OrderType {
 }
 
 ///
-/// Define los estados de la Orden
+/// Order State
 ///
 pub enum OrderState {
     Active,
@@ -32,10 +30,10 @@ pub enum OrderState {
 }
 
 ///
-/// Mercado
+/// Market
 ///
-/// A travez de esta clase se acceden a las funcionalidades que ofrese el mercado,
-/// ya sea crear orden de compra, optener el estado del mercado, etc...
+/// Through this class you access the functionalities offered by the market,
+/// either create purchase order, choose the state of the market, etc ...
 ///
 pub struct Market {
     api: CryptoMktApi,
@@ -44,7 +42,7 @@ pub struct Market {
 
 impl Market {
     ///
-    /// Crea nueva instancia
+    /// Create new instance
     ///
     pub fn new<'m>(api: CryptoMktApi, market_name: &'m str) -> Self {
         Market {
@@ -52,13 +50,16 @@ impl Market {
             name: market_name.to_string(),
         }
     }
-    /// Devuelve el nombre del Mercado (Ej ETHCLP)
+
+    ///
+    /// Get the market name (Ej ETHCLP)
+    ///
     pub fn get_name(&self) -> String {
         self.name.clone()
     }
 
     ///
-    /// Devuelve como resultado el estado del mercado actual
+    /// Get the current ticker
     ///
     pub fn get_current_ticker(&self) -> CryptoMktResult<Ticker> {
         let mut params = HashMap::new();
@@ -72,7 +73,7 @@ impl Market {
     }
 
     ///
-    /// Devuelve como resultado una lista de órdenes activas en CryptoMarket
+    /// Get the order books
     ///
     pub fn get_orders_book(
         &self,
@@ -95,7 +96,7 @@ impl Market {
     }
 
     ///
-    /// Retorna listado de trades realizados en CryptoMarket.
+    /// Get Trades
     ///
     pub fn get_trades<'m>(
         &self,
@@ -120,8 +121,7 @@ impl Market {
     }
 
     ///
-    /// Retorna lista de órdenes activas/ejecutadas en CryptoMarket pertenecientes al usuario
-    /// propietario de las credenciales
+    /// Get user orders by state
     ///
     pub fn get_user_orders_by_state(
         &self,
@@ -147,7 +147,7 @@ impl Market {
         }
     }
     ///
-    /// Permite crear una orden de compra o venta dentro de CryptoMarket
+    /// Create order
     ///
     pub fn create_order(
         &self,
@@ -170,7 +170,7 @@ impl Market {
     }
 
     ///
-    /// Retorna el estado de una orden
+    /// Get Order status
     ///
     pub fn get_order_status<'m>(&self, order_id: &'m str) -> CryptoMktResult<Order> {
         let mut params = HashMap::new();
@@ -188,7 +188,7 @@ impl Market {
     }
 
     ///
-    /// Permite cancelar una orden
+    /// Cancel Order
     ///
     pub fn cancel_order<'m>(&self, order_id: &'m str) -> CryptoMktResult<Order> {
         let mut params = HashMap::new();
@@ -204,7 +204,10 @@ impl Market {
     }
 
     ///
-    /// Obtener cantidad estimada para una orden instantánea en Instant Exchange
+    /// Get order instant
+    ///
+    /// An instant order corresponds to a purchase or sale request within the
+    /// Instant Exchange of CryptoMarket.
     ///
     pub fn get_order_instant(
         &self,
@@ -226,8 +229,9 @@ impl Market {
             Err(e) => Err(e),
         }
     }
+
     ///
-    /// Crear una orden de compra o venta en Instant Exchange
+    /// Create an instant order in the Instant Exchange of CryptoMarket
     ///
     pub fn create_order_instant(
         &self,

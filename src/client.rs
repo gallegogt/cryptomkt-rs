@@ -7,11 +7,11 @@ use internal::response::{BalanceResponse, MarketResponse, PaymentResponse, Payme
 use std::collections::HashMap;
 
 ///
-/// Implementación del cliente para el API
+/// Client implementation for the API
 ///
 /// # Ejemplo
 ///
-/// En este ejemplo se imrpimen el tricker actual de todos los mercados disponibles
+/// Print the current tricker of all available markets
 ///
 /// ```
 /// extern crate cryptomkt;
@@ -41,7 +41,7 @@ pub struct CryptoMktClient {
 
 impl CryptoMktClient {
     ///
-    /// Inicializador
+    /// Create the new Client instance
     ///
     pub fn new<'a>(api_key: &'a str, secret_key: &'a str) -> Self {
         CryptoMktClient {
@@ -49,7 +49,7 @@ impl CryptoMktClient {
         }
     }
     ///
-    /// Devuelve el listado de Mercados existentes en CryptoMkt
+    /// Get Market List
     ///
     pub fn get_markets(&self) -> Vec<Market> {
         let resp =
@@ -70,14 +70,15 @@ impl CryptoMktClient {
         }
     }
     ///
-    /// Devuelve un objeto Mercado dado el nombre
+    /// Return a new market from NAME
     ///
     pub fn create_market<'a>(&self, name: &'a str) -> Market {
         Market::new(self.api.clone(), name)
     }
+
     ///
-    /// Un balance corresponde al estado de tus billeteras de criptomonedas y locales.
-    /// Este estado contiene el saldo disponible, saldo contable y billetera correspondiente.
+    /// A balance corresponds to the status of your cryptocurrency and local wallets.
+    /// This state contains the available balance, account balance and corresponding wallet.
     ///
     pub fn get_balance(&self) -> CryptoMktResult<Vec<Balance>> {
         let resp =
@@ -90,7 +91,7 @@ impl CryptoMktClient {
     }
 
     ///
-    /// Permite crear una orden de pago, entregando QR y urls para pagar.
+    /// It allows you to create a payment order, delivering QRs and urls to pay.
     ///
     pub fn create_payment_order<'a>(
         &self,
@@ -137,7 +138,7 @@ impl CryptoMktClient {
     }
 
     ///
-    /// Permite crear una orden de pago, entregando QR y urls para pagar.
+    /// Returns the status of a payment order
     ///
     pub fn payment_order_status<'a>(&self, id: &'a str) -> CryptoMktResult<Payment> {
         let mut params = HashMap::new();
@@ -154,7 +155,7 @@ impl CryptoMktClient {
     }
 
     ///
-    /// Retorna el listado de las órdenes de pago generadas
+    /// Returns the list of generated payment orders
     ///
     pub fn get_payment_orders<'a>(
         &self,
