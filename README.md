@@ -58,3 +58,14 @@ fn main() {
 }
 
 ```
+
+
+# Contributing
+
+You want to contribute to this project? Wow, thanks! So please just fork it and send me a pull request.
+
+# Support My Efforts
+
+I programmed this lib for fun and do my best effort to support those that have issues with it, please return the favor and support me.
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/reiloygt)
