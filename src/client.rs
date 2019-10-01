@@ -28,12 +28,14 @@
 //! ```
 //!
 
-use api::{CryptoMktApi, RequestMethod};
-use market::Market;
+use crate::api::{CryptoMktApi, RequestMethod};
+use crate::market::Market;
 
-use internal::errors::CryptoMktResult;
-use internal::models::{Balance, Payment};
-use internal::response::{BalanceResponse, MarketResponse, PaymentListResponse, PaymentResponse};
+use crate::internal::errors::CryptoMktResult;
+use crate::internal::models::{Balance, Payment};
+use crate::internal::response::{
+    BalanceResponse, MarketResponse, PaymentListResponse, PaymentResponse,
+};
 use std::collections::HashMap;
 
 ///

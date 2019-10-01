@@ -1,6 +1,6 @@
-use internal::api::Api;
-use internal::errors::CryptoMktErrorType;
-use internal::request::CryptoMktRequest;
+use crate::internal::api::Api;
+use crate::internal::errors::CryptoMktErrorType;
+use crate::internal::request::CryptoMktRequest;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 

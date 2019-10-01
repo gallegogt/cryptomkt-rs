@@ -1,11 +1,10 @@
-extern crate ring;
 use std::collections::HashMap;
 use std::fmt::Write;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use self::ring::{digest, hmac};
 use reqwest::header::{HeaderMap, HeaderValue};
 use reqwest::Url;
+use ring::hmac::{sign, Key, HMAC_SHA384};
 
 use serde::de::DeserializeOwned;
 use serde_json;
@@ -18,8 +17,8 @@ const X_MKT_SIGNATURE: &'static str = "X-MKT-SIGNATURE";
 /// X-MKT-TIMESTAMP: Un timestamp para tu llamada
 const X_MKT_TIMESTAMP: &'static str = "X-MKT-TIMESTAMP";
 
-use internal::errors::{CryptoMktErrorType, CryptoMktResult};
-use internal::request::HttpReq;
+use crate::internal::errors::{CryptoMktErrorType, CryptoMktResult};
+use crate::internal::request::HttpReq;
 
 ///
 /// API Interna
@@ -109,7 +108,7 @@ where
     {
         let api_url = self.build_url(endpoint, &params);
         let headers = self.build_headers(endpoint, &params, is_public, true);
-        let result = try!(self.req.get(api_url, headers));
+        let result = self.req.get(api_url, headers)?;
         match serde_json::from_str(&result) {
             Ok(sr) => Ok(sr),
             Err(e) => {
@@ -135,7 +134,7 @@ where
     {
         let api_url = self.build_url(endpoint, &HashMap::new());
         let headers = self.build_headers(endpoint, &payload, false, false);
-        let result = try!(self.req.post(api_url, headers, payload));
+        let result = self.req.post(api_url, headers, payload)?;
         match serde_json::from_str(&result) {
             Ok(sr) => Ok(sr),
             Err(e) => {
@@ -185,8 +184,8 @@ where
     ///     msg: cadena de texto que se requiere firmar
     ///
     pub fn sign_msg<'a>(&self, msg: &'a str) -> String {
-        let s_key = hmac::SigningKey::new(&digest::SHA384, self.secret_key.as_bytes());
-        let sign = hmac::sign(&s_key, msg.as_bytes());
+        let s_key = Key::new(HMAC_SHA384, self.secret_key.as_bytes());
+        let sign = sign(&s_key, msg.as_bytes());
 
         let mut output = String::new();
         for byte in sign.as_ref() {

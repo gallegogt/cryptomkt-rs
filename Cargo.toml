@@ -1,6 +1,6 @@
 [package]
 name = "cryptomkt"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Yolier Galan Tasse <gallegogt@gmail.com>"]
 readme = "README.md"
 description = "Implementation of Cryptomarket API"
@@ -8,6 +8,7 @@ keywords = ["trading", "API", "cryptocurrency", "development"]
 license-file = "LICENCE"
 repository = "https://github.com/gallegogt/cryptomkt-rs.git"
 homepage = "https://github.com/gallegogt/cryptomkt-rs"
+edition="2018"
 include = [
     "**/*.rs",
     "Cargo.toml",
@@ -42,4 +43,4 @@ bytes = "^0.4"
 # Log
 log = "^0.4"
 # Cryptography
-ring = "^0.14"
+ring = "^0.16"

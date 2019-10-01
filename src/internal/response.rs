@@ -3,7 +3,8 @@
 //! servidor para los diferentes endpoints
 //!
 
-use internal::models::{Balance, Book, Order, OrdersInstant, Payment, Ticker, Trade};
+use crate::internal::models::{Balance, Book, Order, OrdersInstant, Payment, Ticker, Trade};
+use serde::Deserialize;
 use serde_json::Value;
 
 /// Información sobre la paginación

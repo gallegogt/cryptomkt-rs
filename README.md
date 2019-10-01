@@ -1,4 +1,4 @@
-# Criptomarket API
+# [UNOFFICIAL] Criptomarket API
 
 Library for access to the cryptomarket platform (https://www.cryptomkt.com)
 

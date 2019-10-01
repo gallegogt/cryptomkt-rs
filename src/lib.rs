@@ -33,20 +33,14 @@
 
 #[macro_use]
 extern crate log;
-extern crate reqwest;
-
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
 
 mod api;
 mod client;
 mod internal;
 mod market;
 
-pub use api::{CryptoMktApi, RequestMethod};
-pub use client::CryptoMktClient;
-pub use internal::models;
-pub use internal::response;
-pub use market::{Market, OrderType};
+pub use crate::api::{CryptoMktApi, RequestMethod};
+pub use crate::client::CryptoMktClient;
+pub use crate::internal::models;
+pub use crate::internal::response;
+pub use crate::market::{Market, OrderType};

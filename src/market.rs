@@ -1,7 +1,7 @@
-use api::{CryptoMktApi, RequestMethod};
-use internal::errors::CryptoMktResult;
-use internal::models::{Book, Order, OrdersInstant, Ticker, Trade};
-use internal::response::{
+use crate::api::{CryptoMktApi, RequestMethod};
+use crate::internal::errors::CryptoMktResult;
+use crate::internal::models::{Book, Order, OrdersInstant, Ticker, Trade};
+use crate::internal::response::{
     BookResponse, EmptyResponse, OrderResponse, OrdersInstantResponse, SimpleOrderResponse,
     TickerResponse, TradeResponse,
 };
