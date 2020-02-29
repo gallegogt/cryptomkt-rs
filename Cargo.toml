@@ -1,6 +1,6 @@
 [package]
 name = "cryptomkt"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Yolier Galan Tasse <gallegogt@gmail.com>"]
 readme = "README.md"
 description = "Implementation of Cryptomarket API"
