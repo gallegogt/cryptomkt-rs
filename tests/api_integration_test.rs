@@ -1,5 +1,3 @@
-extern crate cryptomkt;
-
 use cryptomkt::CryptoMktClient;
 
 #[test]

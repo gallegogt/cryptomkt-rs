@@ -4,11 +4,6 @@
 //! En este módulo se encuentran las implementaciones de más bajo nivel para el acceso
 //! al API junto con sus respectivas pruebas
 //!
-extern crate hyper;
-extern crate reqwest;
-extern crate ring;
-extern crate serde;
-
 pub mod api;
 pub mod errors;
 pub mod models;
@@ -17,16 +12,16 @@ pub mod response;
 
 #[cfg(test)]
 mod tests {
-    use internal::api::Api;
-    use internal::errors::CryptoMktResult;
-    use internal::request::HttpReq;
+    use crate::internal::api::Api;
+    use crate::internal::errors::CryptoMktResult;
+    use crate::internal::request::HttpRequest;
     use serde_json::json;
 
     use reqwest::header::HeaderMap;
     use reqwest::Url;
     use std::collections::HashMap;
 
-    use response::{
+    use crate::response::{
         BalanceResponse, BookResponse, EmptyResponse, MarketResponse, OrderResponse,
         OrdersInstantResponse, SimpleOrderResponse, TickerResponse, TradeResponse,
     };
@@ -54,7 +49,9 @@ mod tests {
         }
     }
 
-    impl HttpReq for MockRequest {
+    impl HttpRequest for MockRequest {
+        type Result = CryptoMktResult<String>;
+
         ///
         ///  Argumentos:
         ///     url: Url

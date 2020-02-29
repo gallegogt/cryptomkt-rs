@@ -1,6 +1,4 @@
-use reqwest::header::HeaderMap;
-use reqwest::Client;
-use reqwest::{StatusCode, Url};
+use reqwest::{header::HeaderMap, blocking::Client, StatusCode, Url};
 use std::collections::HashMap;
 
 use crate::internal::errors::{CryptoMktErrorType, CryptoMktResult};
@@ -8,13 +6,17 @@ use crate::internal::errors::{CryptoMktErrorType, CryptoMktResult};
 ///
 /// Definición que deben cumplir para poder extaer datos mediante HTTP
 ///
-pub trait HttpReq {
+pub trait HttpRequest {
+    ///
+    /// Result
+    ///
+    type Result;
     ///
     ///  Argumentos:
     ///     url: Url
     ///     headers: HeaderMap
     ///
-    fn get(&self, url: Url, headers: HeaderMap) -> Result<String, CryptoMktErrorType>;
+    fn get(&self, url: Url, headers: HeaderMap) -> Self::Result;
     ///
     ///  Argumentos:
     ///     url: Url
@@ -26,7 +28,7 @@ pub trait HttpReq {
         url: Url,
         headers: HeaderMap,
         payload: HashMap<String, String>,
-    ) -> Result<String, CryptoMktErrorType>;
+    ) -> Self::Result;
 }
 
 ///
@@ -104,16 +106,19 @@ impl CryptoMktRequest {
     }
 }
 
-impl HttpReq for CryptoMktRequest {
+impl HttpRequest for CryptoMktRequest {
+
+    type Result = CryptoMktResult<String>;
+
     ///
     ///  Argumentos:
     ///     url: Url
     ///     headers: HeaderMap
     ///
-    fn get(&self, url: Url, headers: HeaderMap) -> CryptoMktResult<String> {
+    fn get(&self, url: Url, headers: HeaderMap) -> Self::Result {
         let result = self.client.get(url).headers(headers).send();
         match result {
-            Ok(mut resp) => match resp.status() {
+            Ok(resp) => match resp.status() {
                 StatusCode::OK => match resp.text() {
                     Ok(txt) => Ok(txt),
                     Err(e) => {
@@ -140,11 +145,11 @@ impl HttpReq for CryptoMktRequest {
         url: Url,
         headers: HeaderMap,
         payload: HashMap<String, String>,
-    ) -> CryptoMktResult<String> {
+    ) -> Self::Result {
         let result = self.client.post(url).headers(headers).form(&payload).send();
 
         match result {
-            Ok(mut resp) => match resp.status() {
+            Ok(resp) => match resp.status() {
                 StatusCode::OK => match resp.text() {
                     Ok(txt) => Ok(txt),
                     Err(e) => {

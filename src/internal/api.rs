@@ -2,8 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Write;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use reqwest::header::{HeaderMap, HeaderValue};
-use reqwest::Url;
+use reqwest::{header::{HeaderMap, HeaderValue}, Url};
 use ring::hmac::{sign, Key, HMAC_SHA384};
 
 use serde::de::DeserializeOwned;
@@ -18,7 +17,7 @@ const X_MKT_SIGNATURE: &'static str = "X-MKT-SIGNATURE";
 const X_MKT_TIMESTAMP: &'static str = "X-MKT-TIMESTAMP";
 
 use crate::internal::errors::{CryptoMktErrorType, CryptoMktResult};
-use crate::internal::request::HttpReq;
+use crate::internal::request::HttpRequest;
 
 ///
 /// API Interna
@@ -26,7 +25,7 @@ use crate::internal::request::HttpReq;
 #[derive(Debug, Clone)]
 pub struct Api<R>
 where
-    R: HttpReq,
+    R: HttpRequest<Result=CryptoMktResult<String>>
 {
     api_key: String,
     secret_key: String,
@@ -37,7 +36,7 @@ where
 
 impl<R> Api<R>
 where
-    R: HttpReq,
+    R: HttpRequest<Result=CryptoMktResult<String>>
 {
     ///
     /// Crea una instancia de tipo API
